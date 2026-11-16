@@ -1,0 +1,1649 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#183d35">
+  <title>นักสืบกาลเวลา — เข้าสู่ระบบ</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --forest: #183d35;
+      --forest-deep: #102d28;
+      --leaf: #50735a;
+      --gold: #e4ad4c;
+      --ink: #3f2e1e;
+      --muted: #756451;
+      --paper: #fff8e9;
+      --line: #dfcda8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      color: var(--ink);
+      font-family: "Leelawadee UI", "Noto Sans Thai", Tahoma, sans-serif;
+      background:
+        radial-gradient(ellipse at 18% 7%, rgba(227, 185, 95, .2), transparent 34%),
+        radial-gradient(ellipse at 90% 100%, rgba(85, 124, 81, .45), transparent 40%),
+        linear-gradient(140deg, #173c34, #254d3e 52%, #132f2b);
+    }
+    .shell { width: 100%; min-height: 100vh; }
+    .browser {
+      min-height: 100vh;
+      background: #183d35;
+    }
+    .page {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: clamp(12px, 2vh, 22px);
+      padding: clamp(24px, 5vh, 52px) 20px 32px;
+      background-image: linear-gradient(90deg, rgba(12,45,34,.12) 0%, rgba(15,48,36,.05) 43%, rgba(13,39,31,.35) 100%), url("login-background.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .brand { width: min(660px, 100%); align-self: center; text-align: center; padding: 0; margin: 0; color: #fff6dc; }
+    .brand-title-box {
+      width: 100%;
+      max-width: 100%;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      color: #fff6dc;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+      text-align: center;
+    }
+    .brand-copy {
+      width: min(520px, 100%);
+      max-width: 100%;
+      margin: 12px auto 0;
+      padding: 18px 22px;
+      border: 1px solid rgba(243,203,126,.75);
+      border-radius: 16px;
+      color: #fff6dc;
+      background: rgba(20,52,39,.82);
+      box-shadow: 0 10px 25px rgba(9,30,23,.28), inset 0 0 0 3px rgba(255,255,255,.06);
+      backdrop-filter: blur(5px);
+    }
+    h1 {
+      margin: 0;
+      color: #ffe3a3;
+      font-size: clamp(42px, 4.8vw, 62px);
+      line-height: 1.05;
+      letter-spacing: -.04em;
+      white-space: nowrap;
+      text-shadow: 0 3px 0 #79512c, 0 7px 14px rgba(0,0,0,.35);
+    }
+    .brand-title-box h1 {
+      display: block;
+      width: 100%;
+      font-size: clamp(48px, 5.4vw, 78px);
+      text-align: center;
+    }
+    .tagline { margin: 0 auto; max-width: 390px; text-align: center; font-size: 18px; font-weight: 700; line-height: 1.7; }
+    .scene-note { margin: 8px 0 0; color: #f6e5ba; font-size: 14px; line-height: 1.6; text-align: center; }
+    .login-card {
+      width: min(410px, 100%);
+      align-self: center;
+      padding: clamp(28px, 4vw, 45px);
+      border: 2px solid #e4cc9a;
+      border-radius: 23px;
+      background: rgba(255,248,233,.94);
+      backdrop-filter: blur(5px);
+      box-shadow: 0 18px 38px rgba(12,31,25,.33), inset 0 0 0 5px rgba(255,255,255,.3);
+    }
+    .card-heading { margin: 0; text-align: center; font-size: 32px; color: #4c351f; }
+    .card-subtitle { margin: 8px 0 26px; text-align: center; color: var(--muted); font-size: 15px; }
+    .field { display: block; margin: 18px 0; }
+    .field-label { display: block; margin: 0 0 8px; font-size: 15px; font-weight: 700; }
+    .input-wrap { position: relative; }
+    input {
+      display: block;
+      width: 100%;
+      height: 54px;
+      padding: 0 47px 0 15px;
+      border: 1.5px solid #cbb68c;
+      border-radius: 12px;
+      outline: none;
+      background: rgba(255,255,255,.9);
+      color: var(--ink);
+      font: inherit;
+      font-size: 16px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    input:focus { border-color: #5b7a52; box-shadow: 0 0 0 4px rgba(91,122,82,.16); }
+    input::placeholder { color: #a0927c; }
+    .field-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #816748; font-size: 20px; }
+    .toggle-password {
+      position: absolute; right: 9px; top: 50%; transform: translateY(-50%);
+      width: 36px; height: 36px; border: 0; border-radius: 9px; cursor: pointer;
+      color: #70563a; background: transparent; font-size: 18px;
+    }
+    .toggle-password:hover { background: #f1e5ce; }
+    .submit {
+      width: 100%; min-height: 57px; margin-top: 8px; border: 0; border-radius: 13px;
+      color: #fff9e9; background: linear-gradient(#bd782d, #98551e);
+      box-shadow: 0 5px 0 #764018, 0 9px 15px rgba(102,59,22,.2);
+      font: inherit; font-size: 20px; font-weight: 800; cursor: pointer;
+      transition: transform .12s, filter .12s;
+    }
+    .submit:hover { filter: brightness(1.07); transform: translateY(-1px); }
+    .submit:active { transform: translateY(3px); box-shadow: 0 2px 0 #764018; }
+    .route-note { display: flex; gap: 9px; align-items: flex-start; margin: 22px 0 0; color: #72624e; font-size: 13px; line-height: 1.6; }
+    .route-note span { font-size: 17px; }
+    .status { min-height: 24px; margin: 15px 0 0; color: #8a3d28; font-size: 14px; line-height: 1.5; }
+    .status:empty { display: none; }
+    .prototype { margin: 16px 0 0; padding-top: 13px; border-top: 1px solid #e1d0ad; color: #88785f; font-size: 12px; line-height: 1.55; text-align: center; }
+    .hidden { display: none !important; }
+    .inside-view {
+      min-height: 100vh;
+      padding: clamp(22px, 4vw, 54px);
+      color: #fff8e9;
+      background: linear-gradient(100deg, rgba(14,47,36,.72), rgba(18,48,36,.58)), url("login-background.png") center / cover fixed;
+    }
+    #student-view { background: linear-gradient(100deg, rgba(14,47,36,.28), rgba(18,48,36,.2)), url("login-background.png") center / cover fixed; }
+    .view-content { width: min(1120px, 100%); margin: 0 auto; }
+    .view-topbar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:28px; }
+    .view-logo { color:#ffe3a3; font-size:clamp(26px,4vw,38px); font-weight:900; text-shadow:0 3px 9px rgba(0,0,0,.45); }
+    .view-heading { margin:0; color:#fff3d3; font-size:clamp(30px,4vw,44px); text-shadow:0 3px 10px rgba(0,0,0,.4); }
+    .view-subheading { margin:7px 0 0; color:#f6e5c0; }
+    .light-button,.action-button,.map-button,.back-button {
+      border:1px solid rgba(237,210,151,.85); border-radius:12px; padding:11px 18px; cursor:pointer;
+      font:inherit; font-weight:800; transition:transform .12s, filter .12s;
+    }
+    .light-button { color:#49351f; background:#fff5df; }
+    .action-button,.map-button { color:#fff9e9; background:linear-gradient(#bd782d,#98551e); box-shadow:0 4px 0 #764018; }
+    .action-button:disabled { opacity:.6; filter:grayscale(.45); cursor:not-allowed; transform:none; }
+    .back-button { color:#49351f; background:#fff5df; }
+    .light-button:hover,.action-button:hover,.map-button:hover,.back-button:hover { filter:brightness(1.06); transform:translateY(-1px); }
+    .dashboard-panel,.map-card,.stage-board {
+      color:var(--ink); background:rgba(255,248,233,.96); border:2px solid #e4cc9a; border-radius:22px;
+      box-shadow:0 18px 38px rgba(12,31,25,.3); backdrop-filter:blur(5px);
+    }
+    .dashboard-panel { padding:clamp(20px,3vw,34px); }
+    .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:22px 0; }
+    .stat { padding:17px; text-align:center; border-radius:14px; background:#f2e7d0; }
+    .stat strong { display:block; color:#6b481f; font-size:28px; }
+    .stat span { color:#756451; font-size:14px; }
+    .section-title { margin:22px 0 12px; color:#4c351f; font-size:21px; }
+    .table-wrap { overflow-x:auto; }
+    .student-table { width:100%; border-collapse:collapse; min-width:790px; }
+    .student-table th,.student-table td { padding:12px 10px; text-align:left; border-bottom:1px solid #e5d8bf; }
+    .student-table th { color:#705638; font-size:14px; }
+    .reset-progress-button { padding:7px 10px; white-space:nowrap; font-size:13px; }
+    .student-progress-status { min-width:165px; }
+    .student-stage-detail { display:block; margin-top:5px; color:#76664f; font-size:12px; line-height:1.45; }
+    .student-progress-tools { min-width:185px; }
+    .student-progress-tools summary { width:max-content; padding:7px 11px; border:1px solid #d7c397; border-radius:10px; color:#49351f; background:#fff5df; font-weight:800; cursor:pointer; }
+    .reset-stage-picker { display:grid; gap:6px; width:225px; max-width:100%; margin-top:8px; padding:10px; border:1px solid #e4cc9a; border-radius:12px; background:#fffaf0; box-shadow:0 6px 15px rgba(61,48,30,.12); }
+    .reset-stage-picker label { display:flex; align-items:center; gap:7px; color:#5e4b34; font-size:12px; }
+    .reset-stage-picker input { width:16px; height:16px; margin:0; accent-color:#9a612a; }
+    .reset-all-button { color:#7a3328; border-color:#deb8a8; background:#fff0e9; }
+    .badge { display:inline-block; padding:4px 10px; border-radius:999px; color:#47683f; background:#e1efd7; font-size:13px; font-weight:700; }
+    .add-form { display:grid; grid-template-columns:1fr 1fr 1fr auto; align-items:end; gap:10px; padding:15px; border-radius:14px; background:#f7efdf; }
+    .add-form label { display:block; font-size:13px; font-weight:700; }
+    .add-form input { height:44px; margin-top:5px; padding:0 11px; font-size:14px; }
+    .add-note { margin:11px 0 0; color:#76664f; font-size:12px; line-height:1.5; }
+    .maps-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:22px; }
+    .map-card { overflow:hidden; padding:0; border:2px solid #e4c988; border-radius:24px; transition:transform .16s,box-shadow .16s; }
+    .map-card:not(.locked):hover { transform:translateY(-5px); box-shadow:0 22px 42px rgba(12,31,25,.38); }
+    .map-art { position:relative; height:clamp(220px,25vw,300px); display:flex; align-items:flex-start; justify-content:flex-start; overflow:hidden; background-color:#6b8850; background-image:url("map-illustrations.png"); background-repeat:no-repeat; background-size:200% auto; background-position:left center; }
+    .map-art::before { content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(16,39,30,.35),transparent 32%,transparent 70%,rgba(16,39,30,.22)); }
+    .map-card.history .map-art { background-position:right center; }
+    .history-board-art { height:clamp(180px,24vw,280px); margin:0 0 16px; border:2px solid #e4c988; border-radius:20px; background-position:right center; }
+    .map-card.locked .map-art { filter:grayscale(.35); }
+    .map-art .map-ribbon { position:absolute; z-index:2; top:16px; left:16px; padding:7px 13px; border:1px solid #f0d28c; border-radius:999px; color:#fff4d3; background:rgba(73,48,25,.86); box-shadow:0 4px 10px rgba(0,0,0,.25); font-size:14px; font-weight:800; }
+    .map-card.locked .map-art::after { content:"⛓️"; position:absolute; z-index:2; left:50%; top:50%; transform:translate(-50%,-50%) rotate(-12deg); padding:14px 20px; border:2px solid rgba(255,255,255,.7); border-radius:18px; color:#f7f3e8; background:rgba(60,64,62,.7); box-shadow:0 7px 16px rgba(0,0,0,.28); font-size:48px; }
+    .map-card-body { padding:22px 24px 24px; }
+    .map-card h3 { margin:0; color:#4c351f; font-size:25px; }
+    .map-card p { min-height:48px; color:#756451; line-height:1.7; }
+    .map-button { min-width:175px; min-height:48px; }
+    .map-card.locked { opacity:.88; }
+    .map-card.locked .map-card-body { background:#e8e5dd; }
+    .map-card.locked h3,.map-card.locked p { color:#64635d; }
+    .map-card.locked .map-button { color:#f6f4ef; background:#85847e; box-shadow:0 4px 0 #62615c; border-color:#a6a49d; cursor:not-allowed; }
+    .stage-board { display:none; margin-top:22px; padding:clamp(18px,3vw,30px); }
+    .stage-board.open { display:block; }
+    .stage-list { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:14px; }
+    .stage-item { width:100%; font:inherit; cursor:pointer; position:relative; min-height:132px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:7px; padding:14px 9px; border:1px solid #d5d1c7; border-radius:18px; text-align:center; color:#6f6d66; background:linear-gradient(145deg,#f1eee7,#dedbd3); box-shadow:inset 0 2px 0 rgba(255,255,255,.85),0 5px 12px rgba(61,48,30,.08); }
+    .stage-item:disabled { cursor:not-allowed; opacity:.84; }
+    .stage-item.cleared { border-color:#83aa67; }
+    .stage-item.cleared strong { color:#fff; background:#56834b; }
+    .stage-item.active { color:#4c351f; border:2px solid #d69c3e; background:linear-gradient(145deg,#fff5d9,#f2d99b); box-shadow:inset 0 2px 0 #fffdf3,0 7px 15px rgba(117,81,26,.18); }
+    .stage-item strong { display:grid; place-items:center; width:36px; height:36px; margin-bottom:2px; border-radius:50%; color:#5f5c54; background:#d2d0c8; }
+    .stage-item.active strong { color:#fff8e9; background:#b97829; }
+    .stage-item span { font-size:13px; line-height:1.5; }
+    .game-view { min-height:100vh; padding:18px clamp(14px,2.5vw,36px) 28px; color:#fff8e9; background:linear-gradient(100deg,rgba(12,42,33,.76),rgba(15,47,36,.64)),url("login-background.png") center/cover fixed; }
+    .game-content { width:min(1500px,100%); margin:0 auto; }
+    .game-topbar { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-bottom:14px; }
+    .era-title { color:#ffe3a3; font-size:clamp(23px,3vw,34px); font-weight:900; text-shadow:0 3px 9px rgba(0,0,0,.45); }
+    .era-subtitle { margin-top:2px; color:#f6e5c0; font-size:14px; }
+    .game-actions { display:flex; align-items:center; gap:8px; }
+    .progress-box { display:flex; align-items:center; gap:12px; padding:9px 14px; border:1px solid rgba(243,203,126,.8); border-radius:999px; background:rgba(20,52,39,.82); }
+    .progress-label { font-size:14px; font-weight:800; white-space:nowrap; }
+    .progress-circles { display:flex; gap:5px; }
+    .progress-dot { width:17px; height:17px; border-radius:50%; border:2px solid #c5c2b9; background:#85847e; }
+    .progress-dot.done { border-color:#ffe198; background:#f5c344; box-shadow:0 0 8px rgba(255,219,115,.55); }
+    .game-layout { display:grid; grid-template-columns:205px minmax(0,1fr) 235px; gap:12px; align-items:stretch; }
+    .guide-panel,.evidence-panel { color:var(--ink); border:2px solid #e4cc9a; border-radius:20px; background:rgba(255,248,233,.97); box-shadow:0 12px 30px rgba(12,31,25,.3); }
+    .guide-panel { padding:18px 15px; display:flex; flex-direction:column; align-items:center; text-align:center; }
+    .guide-avatar { width:132px; height:176px; display:block; margin:2px auto 12px; border:3px solid #e4bd68; border-radius:18px; background:#d8c18d url("login-background.png") left bottom / 280% auto no-repeat; box-shadow:0 6px 14px rgba(80,52,22,.18); }
+    .guide-panel h2 { margin:0; font-size:20px; color:#51381f; }
+    .guide-panel p { margin:8px 0 16px; padding:12px; border:1px solid #e2d0ad; border-radius:14px; color:#655541; background:#f7efdf; box-shadow:0 3px 9px rgba(80,52,22,.08); font-size:14px; line-height:1.65; }
+    .talk-button { margin-top:auto; min-height:44px; border:1px solid #d3a851; border-radius:12px; padding:8px 12px; color:#fff9e9; background:linear-gradient(#bd782d,#98551e); font:inherit; font-weight:800; cursor:pointer; }
+    .scene-stage { position:relative; height:clamp(440px,calc(100vh - 240px),650px); min-height:0; overflow:hidden; border:3px solid #e4c77f; border-radius:22px; background:#426044 url("old-stone-scene.png") center/cover no-repeat; box-shadow:0 16px 35px rgba(12,31,25,.38); }
+    .scene-stage::after { content:"ภาพจำลองเพื่อการเรียนรู้จากหลักฐานทางโบราณคดี"; position:absolute; right:12px; bottom:9px; z-index:3; padding:5px 9px; border-radius:8px; color:#fff7e5; background:rgba(20,40,28,.76); font-size:11px; }
+    .hotspot { position:absolute; z-index:2; width:12%; height:18%; display:block; padding:0; border:2px solid transparent; border-radius:18px; color:transparent; background:transparent; box-shadow:none; font-size:25px; cursor:pointer; animation:none; }
+    .hotspot span { opacity:0; }
+    .hotspot.found { width:52px; height:52px; display:grid; place-items:center; border:3px solid #dff0c6; color:#fff; background:#477c42; box-shadow:0 0 0 5px rgba(247,196,63,.25),0 5px 15px rgba(0,0,0,.38); animation:none; }
+    .hotspot.found span { opacity:1; }
+    .hotspot-shelter { left:20%; top:27%; }
+    .hotspot-chopper { left:8%; top:73%; }
+    .hotspot-flakes { left:29%; top:75%; }
+    .decoy-girl { left:64%; top:58%; width:13%; height:23%; }
+    .decoy-deer { left:82%; top:48%; width:12%; height:20%; }
+    .decoy-ground-deer { left:43%; top:59%; width:15%; height:19%; }
+    .decoy-standing-person { left:55%; top:14%; width:12%; height:24%; }
+    .middle-core { left:52%; top:76%; width:17%; height:20%; }
+    .middle-scraper { left:83%; top:65%; width:13%; height:20%; }
+    .middle-flake { left:37%; top:81%; width:15%; height:15%; }
+    .middle-decoy-gatherer { left:48%; top:12%; width:14%; height:24%; }
+    .middle-decoy-toolmaker { left:19%; top:36%; width:17%; height:20%; }
+    .middle-decoy-stream { left:66%; top:35%; width:14%; height:22%; }
+    .neo-axe { left:3%; top:74%; width:19%; height:23%; }
+    .neo-pot { left:20%; top:48%; width:23%; height:32%; }
+    .neo-crop { left:66%; top:48%; width:24%; height:34%; }
+    .neo-decoy { left:45%; top:22%; width:16%; height:30%; }
+    .bronze-mold { left:36%; top:63%; width:19%; height:25%; }
+    .bronze-axe { left:2%; top:79%; width:20%; height:17%; }
+    .bronze-bangle { left:34%; top:84%; width:14%; height:14%; }
+    .bronze-decoy { left:60%; top:29%; width:15%; height:30%; }
+    .iron-axe { left:57%; top:75%; width:23%; height:22%; }
+    .iron-spear { left:78%; top:73%; width:19%; height:23%; }
+    .iron-bloom { left:1%; top:69%; width:18%; height:22%; }
+    .iron-decoy { left:47%; top:34%; width:16%; height:32%; }
+    @keyframes glow { from { box-shadow:0 0 0 3px rgba(247,196,63,.24),0 5px 15px rgba(0,0,0,.32); } to { box-shadow:0 0 0 8px rgba(247,196,63,.4),0 5px 18px rgba(0,0,0,.42); } }
+    .evidence-panel { padding:16px 13px; }
+    .evidence-heading { display:flex; align-items:center; justify-content:space-between; gap:5px; margin:0 0 12px; color:#51381f; font-size:20px; }
+    .evidence-count { padding:3px 8px; border-radius:999px; color:#705638; background:#efe2c4; font-size:12px; white-space:nowrap; }
+    .evidence-list { display:grid; gap:9px; }
+    .evidence-entry { width:100%; display:grid; grid-template-columns:54px 1fr; align-items:center; gap:9px; padding:9px; border:1px solid #ddcfb3; border-radius:12px; color:#66543b; background:#f6efdf; text-align:left; font:inherit; cursor:pointer; }
+    .evidence-entry:hover { border-color:#c69038; background:#fff4d8; }
+    .evidence-entry strong { display:block; color:#51381f; font-size:14px; }
+    .evidence-entry small { display:block; margin-top:4px; font-size:12px; }
+    .evidence-entry.unfound { color:#898477; border-style:dashed; background:#eeece5; cursor:default; }
+    .evidence-entry.unfound strong { color:#77736b; }
+    .evidence-thumb,.evidence-large-thumb { display:block; border:1px solid #d5bd87; border-radius:10px; background-color:#e5d6ae; background-image:url("old-stone-scene.png"); background-repeat:no-repeat; }
+    .evidence-thumb { width:54px; height:52px; background-size:430% auto; }
+    .thumb-shelter { background-position:4% 7%; }
+    .thumb-chopper { background-position:18% 97%; }
+    .thumb-flake { background-position:38% 100%; }
+    .thumb-core { background-position:59% 99%; }
+    .thumb-scraper { background-position:89% 75%; }
+    .thumb-middleflake { background-position:43% 91%; }
+    .evidence-large-thumb { width:100%; height:170px; margin:10px 0 15px; background-size:190% auto; }
+    .large-shelter { background-position:0 5%; }
+    .large-chopper { background-position:13% 100%; }
+    .large-flake { background-position:33% 100%; }
+    .large-core { background-position:58% 97%; }
+    .large-scraper { background-position:90% 74%; }
+    .large-middleflake { background-position:43% 92%; }
+    .empty-journal { margin:0; padding:17px 10px; border:1px dashed #cfc2a7; border-radius:12px; color:#7d705a; background:#f7f1e4; text-align:center; font-size:13px; line-height:1.6; }
+    .game-footer { position:relative; display:flex; justify-content:center; margin-top:14px; min-height:58px; }
+    .activity-start { min-width:min(320px,100%); min-height:54px; border:2px solid #f2d48f; border-radius:16px; color:#fff8e9; background:linear-gradient(#c7832f,#95511d); box-shadow:0 5px 0 #704018,0 10px 18px rgba(0,0,0,.25); font:inherit; font-size:19px; font-weight:900; cursor:pointer; }
+    .activity-start:disabled { opacity:.62; filter:grayscale(.4); cursor:not-allowed; }
+    .next-stage-shortcut { position:absolute; right:0; top:0; min-height:54px; padding:0 20px; border:2px solid #ffe19a; border-radius:16px; color:#fff9e9; background:linear-gradient(#4f8053,#2d603e); box-shadow:0 0 0 3px rgba(255,218,117,.24),0 5px 0 #214c32,0 0 20px rgba(255,220,119,.45); font:inherit; font-weight:900; cursor:pointer; animation:next-stage-glow 2.8s ease-in-out infinite; }
+    .next-stage-shortcut:hover { filter:brightness(1.12); }
+    @keyframes next-stage-glow { 0%,100% { box-shadow:0 0 0 2px rgba(255,218,117,.18),0 5px 0 #214c32,0 0 12px rgba(255,220,119,.28); } 50% { box-shadow:0 0 0 5px rgba(255,218,117,.42),0 5px 0 #214c32,0 0 26px rgba(255,220,119,.75); } }
+    .sound-control { position:fixed; left:16px; bottom:14px; z-index:30; display:grid; place-items:center; width:52px; height:52px; padding:0; border:1px solid rgba(244,219,165,.8); border-radius:50%; color:#fff6df; background:rgba(20,48,37,.9); box-shadow:0 5px 16px rgba(0,0,0,.3); backdrop-filter:blur(6px); }
+    .sound-control button { display:grid; place-items:center; width:50px; height:50px; padding:0; border:0; border-radius:50%; color:#fff6df; background:transparent; cursor:pointer; }
+    .sound-control button:hover { background:rgba(255,255,255,.12); }
+    .sound-control svg { width:25px; height:25px; }
+    .sound-control .mute-slash { display:none; }
+    .sound-control.muted .sound-wave { display:none; }
+    .sound-control.muted .mute-slash { display:block; }
+    .scene-atmosphere { position:absolute; inset:0; z-index:1; overflow:hidden; pointer-events:none; }
+    .water-shimmer { position:absolute; opacity:.2; mix-blend-mode:screen; background:repeating-linear-gradient(174deg,transparent 0 12px,rgba(225,247,227,.55) 13px 15px,transparent 16px 30px); animation:water-flow 3.2s ease-in-out infinite alternate; }
+    .atmosphere-oldstone .water-shimmer { left:59%; right:1%; top:48%; height:49%; }
+    .atmosphere-middlestone .water-shimmer { left:42%; right:0; top:31%; height:48%; }
+    .leaf-light { position:absolute; inset:-20% 18% 50% -10%; opacity:.28; background:radial-gradient(ellipse at 20% 25%,rgba(255,231,146,.55),transparent 40%),radial-gradient(ellipse at 75% 20%,rgba(211,244,180,.4),transparent 36%); animation:leaf-drift 6.5s ease-in-out infinite alternate; }
+    .fire-glow { display:none; position:absolute; left:16%; top:38%; width:18%; height:25%; border-radius:50%; opacity:.28; background:radial-gradient(ellipse,rgba(255,181,58,.75),rgba(255,120,24,.16) 42%,transparent 72%); animation:fire-flicker 1.2s ease-in-out infinite alternate; }
+    .atmosphere-oldstone .fire-glow { display:block; }
+    .living-cutout { position:absolute; inset:0; z-index:1; pointer-events:none; background-repeat:no-repeat; background-position:center; background-size:cover; animation:idle-bob 3.2s ease-in-out infinite; }
+    .living-person-old { clip-path:polygon(65% 53%,68% 48%,72% 48%,75% 54%,77% 58%,75% 61%,73% 60%,75% 65%,73% 69%,74% 77%,71% 83%,68% 82%,66% 74%,64% 70%,63% 64%,61% 61%,64% 59%); transform-origin:70% 67%; }
+    .living-deer-old { clip-path:polygon(84% 43%,86% 41%,88% 43%,89% 46%,92% 45%,95% 46%,95% 50%,91% 51%,89% 50%,88% 53%,86% 53%,86% 50%,83% 49%); transform-origin:90% 48%; animation-duration:2.4s; }
+    .living-person-middle { clip-path:polygon(69% 28%,74% 25%,79% 27%,82% 33%,85% 38%,91% 43%,96% 47%,95% 51%,90% 50%,86% 47%,85% 57%,83% 67%,78% 70%,74% 66%,73% 57%,70% 50%,67% 45%); transform-origin:82% 52%; animation-duration:3.1s; }
+    .living-person-middle-two { clip-path:polygon(5% 29%,8% 23%,14% 21%,19% 24%,22% 30%,24% 36%,27% 44%,25% 50%,22% 45%,19% 40%,18% 49%,15% 57%,12% 56%,12% 48%,9% 42%,7% 36%); transform-origin:15% 40%; animation-delay:-2.6s; animation-duration:3.6s; }
+    .living-neolithic { clip-path:polygon(62% 39%,66% 38%,69% 42%,70% 49%,73% 52%,76% 57%,74% 61%,71% 56%,70% 65%,68% 75%,64% 75%,63% 65%,61% 57%,59% 51%); animation-duration:3.4s; }
+    .living-bronze { clip-path:polygon(34% 12%,39% 11%,43% 15%,45% 22%,49% 27%,51% 34%,48% 38%,45% 33%,44% 46%,41% 58%,36% 59%,35% 46%,32% 35%,30% 26%); animation-duration:2.8s; }
+    .living-iron { clip-path:polygon(15% 20%,20% 17%,25% 21%,28% 28%,31% 33%,34% 43%,31% 48%,28% 42%,27% 54%,25% 68%,20% 68%,19% 55%,16% 44%,12% 34%); animation-duration:3s; }
+    .atmosphere-neolithic .water-shimmer { left:60%; right:0; top:39%; height:55%; }
+    .atmosphere-bronze .fire-glow,.atmosphere-iron .fire-glow { display:block; left:28%; top:35%; width:30%; height:45%; opacity:.42; }
+    .atmosphere-bronze .water-shimmer,.atmosphere-iron .water-shimmer { left:0; right:0; top:25%; height:25%; opacity:.1; }
+    .atmosphere-bronze .leaf-light,.atmosphere-iron .leaf-light { inset:-10% 5% 60% -5%; }
+    @keyframes water-flow { from { transform:translateX(-15px) translateY(-2px) scaleY(.96); opacity:.14; } to { transform:translateX(16px) translateY(6px) scaleY(1.04); opacity:.38; } }
+    @keyframes leaf-drift { from { transform:translate(-2%,0) rotate(-1deg); opacity:.16; } to { transform:translate(2%,2%) rotate(1deg); opacity:.36; } }
+    @keyframes fire-flicker { from { transform:scale(.94); opacity:.18; } to { transform:scale(1.05); opacity:.38; } }
+    @keyframes idle-bob { 0%,100% { transform:translateY(0) scale(1) rotate(0); } 50% { transform:translateY(-7px) scale(1.008) rotate(.35deg); } }
+    .game-dialog { position:relative; width:min(560px,calc(100% - 28px)); max-height:85vh; overflow:auto; padding:28px; border:2px solid #e4cc9a; border-radius:22px; color:var(--ink); background:var(--paper); box-shadow:0 22px 60px rgba(0,0,0,.38); }
+    .game-dialog::backdrop { background:rgba(11,29,23,.68); backdrop-filter:blur(3px); }
+    .dialog-close { position:absolute; top:10px; right:12px; width:38px; height:38px; border:0; border-radius:50%; color:#654a2a; background:#efe1c4; font-size:23px; cursor:pointer; }
+    .game-dialog h2 { margin:0 42px 12px 0; color:#51381f; font-size:25px; }
+    .game-dialog p { color:#62543f; line-height:1.7; }
+    .evidence-meta { padding:12px; border-radius:12px; background:#f0e7d4; font-size:14px; }
+    .source-link { color:#315e49; font-weight:700; }
+    .question-type { display:inline-block; padding:5px 10px; border-radius:999px; color:#4c6a3f; background:#e3ecd8; font-size:13px; font-weight:800; }
+    .question-text { margin:15px 0; color:#3f2e1e!important; font-size:20px; font-weight:800; }
+    .answer-list { display:grid; gap:9px; }
+    .answer-option { width:100%; padding:12px 15px; border:1.5px solid #d4c19c; border-radius:12px; color:#4a3a27; background:white; text-align:left; font:inherit; cursor:pointer; }
+    .answer-option:hover:not(:disabled) { border-color:#9c6f2f; background:#fff5dc; }
+    .answer-option:disabled { cursor:default; }
+    .answer-feedback { min-height:30px; font-weight:700; }
+    .next-question { display:none; margin-top:12px; }
+    .next-question.show { display:inline-flex; }
+    .guide-dialog-text { font-size:18px; }
+    .chat-log { display:grid; gap:10px; max-height:260px; overflow:auto; margin:12px 0; padding:12px; border:1px solid #e1d0ad; border-radius:13px; background:#f7f1e4; }
+    .chat-message { width:fit-content; max-width:92%; padding:9px 12px; border-radius:14px; color:#4f412f; background:#fffdf6; box-shadow:0 2px 5px rgba(70,50,25,.08); line-height:1.55; }
+    .chat-message.user { justify-self:end; color:#fff8e9; background:#477354; }
+    .chat-form { display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center; }
+    .chat-form input { height:46px; padding:0 12px; }
+    .suggested-questions { display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }
+    .suggested-questions button { border:1px solid #d8c59e; border-radius:999px; padding:7px 10px; color:#604a2c; background:#f4ead6; font:inherit; font-size:13px; cursor:pointer; }
+    .review-button { margin:12px 8px 0 0; }
+    .notice-toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:10; max-width:calc(100% - 30px); padding:13px 18px; border-radius:12px; color:#fff8e9; background:#173c34; box-shadow:0 8px 24px rgba(0,0,0,.3); }
+    @media (max-width: 900px) {
+      .page { min-height: 100vh; grid-template-columns: 1fr; gap: 10px; padding: 28px 20px 34px; background-position: 34% center; }
+      .brand { align-self: center; padding: 0; margin: 0; max-width: none; text-align: center; }
+      .brand-title-box { margin: auto; padding: 16px 15px; }
+      .brand-copy { max-width: 100%; margin: 10px auto 0; padding: 14px 15px; }
+      .brand-title-box h1 { font-size: clamp(38px, 10vw, 54px); }
+      .tagline { margin: 8px auto 0; font-size: 15px; }
+      .scene-note { margin-top: 4px; font-size: 12px; }
+      .login-card { padding: 25px 22px; }
+      .card-heading { font-size: 28px; }
+      .inside-view { padding:22px 16px; background-attachment:scroll; }
+      .stats-grid { grid-template-columns:1fr; gap:9px; }
+      .stat { display:flex; align-items:center; justify-content:space-between; text-align:left; }
+      .stat strong { font-size:22px; }
+      .add-form { grid-template-columns:1fr; }
+      .maps-grid { grid-template-columns:1fr; }
+      .map-art { min-height:150px; }
+      .stage-list { grid-template-columns:1fr 1fr; }
+      .game-view { padding:16px 10px 22px; background-attachment:scroll; }
+      .game-topbar { align-items:flex-start; flex-wrap:wrap; }
+      .progress-box { order:3; width:100%; justify-content:center; }
+      .game-layout { grid-template-columns:1fr; }
+      .scene-stage { order:1; height:min(62vh,540px); min-height:390px; }
+      .guide-panel { order:2; display:grid; grid-template-columns:64px 1fr; gap:0 12px; align-items:center; text-align:left; padding:12px; }
+      .guide-avatar { grid-row:span 2; width:70px; height:94px; margin:0; border-radius:13px; background-size:280% auto; }
+      .guide-panel h2 { align-self:end; font-size:18px; }
+      .guide-panel p { align-self:start; margin:2px 0 0; font-size:13px; }
+      .talk-button { grid-column:2; justify-self:start; margin:8px 0 0; }
+      .evidence-panel { order:3; }
+      .evidence-list { grid-template-columns:1fr 1fr; }
+      .activity-start { width:100%; }
+      .game-footer { display:grid; gap:10px; }
+      .next-stage-shortcut { position:static; justify-self:end; }
+      .sound-control { left:8px; bottom:8px; }
+      .question-text { font-size:18px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="browser">
+      <section class="page" id="login-view" aria-label="หน้าเข้าสู่ระบบ นักสืบกาลเวลา">
+        <header class="brand">
+          <div class="brand-title-box">
+            <h1>นักสืบกาลเวลา</h1>
+          </div>
+          <div class="brand-copy">
+            <p class="tagline">พร้อมออกเดินทางตามรอยเรื่องราวจากอดีตหรือยัง?</p>
+            <p class="scene-note">เกมการเรียนรู้ประวัติศาสตร์สำหรับนักเรียนชั้นประถมศึกษาปีที่ 4</p>
+          </div>
+        </header>
+
+        <form class="login-card" id="login-form">
+          <h2 class="card-heading">เข้าสู่ระบบ</h2>
+          <p class="card-subtitle">กรอกข้อมูลบัญชีที่ครูจัดให้</p>
+          <label class="field">
+            <span class="field-label">รหัสผู้เรียน / ชื่อผู้ใช้ครู</span>
+            <span class="input-wrap">
+              <input id="username" name="username" autocomplete="username" required maxlength="64" placeholder="กรอกรหัสผู้เรียนหรือชื่อผู้ใช้" aria-describedby="route-note login-status">
+              <span class="field-icon" aria-hidden="true">♙</span>
+            </span>
+          </label>
+          <label class="field">
+            <span class="field-label">รหัสผ่าน</span>
+            <span class="input-wrap">
+              <input id="password" name="password" type="password" autocomplete="current-password" required maxlength="128" placeholder="กรอกรหัสผ่าน">
+              <button class="toggle-password" type="button" id="toggle-password" aria-label="แสดงรหัสผ่าน" title="แสดงหรือซ่อนรหัสผ่าน">◉</button>
+            </span>
+          </label>
+          <button class="submit" type="submit">เข้าสู่ระบบ</button>
+          <p class="route-note" id="route-note"><span aria-hidden="true">ⓘ</span><span>ระบบจะพาไปยังหน้าที่เหมาะกับบัญชีของคุณ</span></p>
+          <p class="status" id="login-status" role="status" aria-live="polite"></p>
+          <p class="prototype">บัญชีตัวอย่างใช้ทดสอบการนำทางเท่านั้น ยังไม่ใช่ระบบบัญชีจริง</p>
+        </form>
+      </section>
+
+      <section class="inside-view hidden" id="teacher-view" aria-label="ระบบหลังบ้านครู">
+        <div class="view-content">
+          <header class="view-topbar">
+            <div>
+              <div class="view-logo">นักสืบกาลเวลา</div>
+              <h1 class="view-heading">ระบบหลังบ้านครู</h1>
+              <p class="view-subheading" id="teacher-greeting">ยินดีต้อนรับ</p>
+            </div>
+            <button class="light-button logout-button" type="button">ออกจากระบบ</button>
+          </header>
+          <div class="dashboard-panel">
+            <div class="stats-grid">
+              <div class="stat"><span>ผู้เรียนทั้งหมด</span><strong id="student-count">1</strong></div>
+              <div class="stat"><span>เริ่มเล่นแล้ว</span><strong id="started-count">0</strong></div>
+              <div class="stat"><span>เรียนจบชุดแรก</span><strong id="completed-count">0</strong></div>
+            </div>
+            <h2 class="section-title">เพิ่มผู้เรียน</h2>
+            <form class="add-form" id="add-student-form">
+              <label>รหัสผู้เรียน<input id="new-student-id" required maxlength="24" placeholder="เช่น 2222"></label>
+              <label>ชื่อที่แสดง<input id="new-student-name" required maxlength="50" placeholder="ชื่อเล่นหรือชื่อสมมติ"></label>
+              <label>รหัสผ่านเริ่มต้น<input id="new-student-password" required maxlength="64" placeholder="กำหนดรหัสผ่าน"></label>
+              <button class="action-button" type="submit">เพิ่มผู้เรียน</button>
+            </form>
+            <p class="add-note">ต้นแบบนี้เพิ่มบัญชีไว้ในหน่วยความจำชั่วคราวเท่านั้น ข้อมูลจะหายเมื่อปิดหรือโหลดหน้าใหม่ และยังไม่ใช่ระบบบัญชีจริง</p>
+            <h2 class="section-title">รายชื่อผู้เรียน</h2>
+            <p class="add-note">ปุ่มรีเซ็ตล้างหลักฐานและกิจกรรมของผู้เรียนคนนั้น เพื่อให้เริ่มด่านใหม่ได้ ข้อมูลต้นแบบเก็บในเบราว์เซอร์เครื่องนี้</p>
+            <div class="table-wrap">
+              <table class="student-table">
+                <thead><tr><th>รหัสผู้เรียน</th><th>ชื่อที่แสดง</th><th>ความคืบหน้า</th><th>สถานะ</th><th>การจัดการ</th></tr></thead>
+                <tbody id="student-list"><tr><td>1111</td><td>นักเรียนตัวอย่าง 1</td><td>0%</td><td><span class="badge">ยังไม่เริ่ม</span></td><td><button class="light-button reset-progress-button" type="button" data-reset-student="1111">รีเซ็ตความคืบหน้า</button></td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="inside-view hidden" id="student-view" aria-label="หน้าเลือกแผนที่นักเรียน">
+        <div class="view-content">
+          <header class="view-topbar">
+            <div>
+              <div class="view-logo">นักสืบกาลเวลา</div>
+              <h1 class="view-heading">เลือกแผนที่ผจญภัย</h1>
+              <p class="view-subheading" id="student-greeting">พร้อมออกเดินทางหรือยัง?</p>
+            </div>
+            <button class="light-button logout-button" type="button">ออกจากระบบ</button>
+          </header>
+          <div class="maps-grid">
+            <article class="map-card">
+              <div class="map-art" aria-hidden="true"><span class="map-ribbon">แผนที่ 1 · เปิดแล้ว</span></div>
+              <div class="map-card-body">
+                <h3>สมัยก่อนประวัติศาสตร์</h3>
+                <p>เปิดแผนที่แล้ว ออกสำรวจห้าด่านจากยุคหินเก่าถึงยุคเหล็ก</p>
+                <button class="map-button" id="open-prehistory" type="button">ดูด่านในแผนที่</button>
+              </div>
+            </article>
+            <article class="map-card history locked" id="history-map-card" aria-disabled="true">
+              <div class="map-art" aria-hidden="true"><span class="map-ribbon">แผนที่ 2</span></div>
+              <div class="map-card-body">
+                <h3>สมัยประวัติศาสตร์</h3>
+                <p>แผนที่นี้ยังล็อกอยู่ เรียนจบสมัยก่อนประวัติศาสตร์ก่อน แล้วกลับมาเปิดแผนที่นี้ภายหลัง</p>
+                <button class="map-button" id="open-history" type="button" disabled>ยังไม่เปิด</button>
+              </div>
+            </article>
+          </div>
+          <section class="stage-board" id="stage-board" aria-label="ด่านสมัยก่อนประวัติศาสตร์">
+            <h2 class="section-title">ด่านสมัยก่อนประวัติศาสตร์</h2>
+            <div class="stage-list" id="stage-list" aria-label="เลือกด่านก่อนประวัติศาสตร์"></div>
+            <p class="add-note">ทำกิจกรรมให้ผ่านตามลำดับ เพื่อเปิดด่านถัดไป</p>
+          </section>
+          <section class="stage-board" id="history-board" aria-label="แผนที่สมัยประวัติศาสตร์">
+            <h2 class="section-title">แผนที่สมัยประวัติศาสตร์</h2>
+            <div class="map-art history-board-art" aria-hidden="true"><span class="map-ribbon">ปลดล็อกแล้ว</span></div>
+            <div class="dashboard-panel">
+              <p class="view-subheading">ปลดล็อกแผนที่แล้ว! ด่านในสมัยประวัติศาสตร์จะปรากฏเมื่อเพิ่มชุดเนื้อหานี้</p>
+              <button class="action-button" id="back-from-history" type="button">กลับไปหน้าแผนที่</button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="game-view hidden" id="oldstone-view" aria-label="ด่านสมัยก่อนประวัติศาสตร์">
+        <div class="game-content">
+          <header class="game-topbar">
+            <div>
+              <div class="era-title" id="era-title">ด่าน 1 · ยุคหินเก่า</div>
+              <div class="era-subtitle" id="era-subtitle">สำรวจฉาก แล้วค้นหาหลักฐานจากอดีต</div>
+            </div>
+            <div class="progress-box" aria-label="ความคืบหน้ากิจกรรม">
+              <span class="progress-label" id="activity-progress-label">กิจกรรม 0/5</span>
+              <div class="progress-circles" id="activity-dots" aria-hidden="true">
+                <span class="progress-dot"></span><span class="progress-dot"></span><span class="progress-dot"></span><span class="progress-dot"></span><span class="progress-dot"></span>
+              </div>
+            </div>
+            <div class="game-actions">
+              <button class="light-button" id="back-to-map" type="button">กลับแผนที่</button>
+              <button class="light-button logout-button" type="button">ออกจากระบบ</button>
+            </div>
+          </header>
+
+          <div class="game-layout">
+            <aside class="guide-panel">
+              <div class="guide-avatar" role="img" aria-label="ตัวละครไกด์นักสืบผู้หญิงในชุดเรียบง่าย"></div>
+              <h2>ไกด์นักสืบ</h2>
+              <p id="guide-message">ลองสังเกตสิ่งของในฉากก่อนนะ ถ้ายังไม่แน่ใจ กดคุยกับฉันเพื่อขอคำใบ้ได้</p>
+              <button class="talk-button" id="talk-to-guide" type="button">คุยกับตัวละคร</button>
+            </aside>
+
+            <div class="scene-stage" id="scene-stage" aria-label="ฉากจำลองยุคหินเก่า">
+              <button class="hotspot hotspot-shelter" type="button" data-evidence="shelter" aria-label="ลองเลือกบริเวณเพิงผาเพื่อค้นหาหลักฐาน"><span aria-hidden="true">⌕</span></button>
+              <button class="hotspot hotspot-chopper" type="button" data-evidence="chopper" aria-label="ลองเลือกก้อนหินเครื่องมือเพื่อค้นหาหลักฐาน"><span aria-hidden="true">⌕</span></button>
+              <button class="hotspot hotspot-flakes" type="button" data-evidence="flake" aria-label="ลองเลือกสะเก็ดหินเพื่อค้นหาหลักฐาน"><span aria-hidden="true">⌕</span></button>
+              <button class="hotspot decoy-girl" type="button" data-decoy aria-label="ตรวจสอบเด็กผู้หญิงในฉาก"></button>
+              <button class="hotspot decoy-deer" type="button" data-decoy aria-label="ตรวจสอบกวางในฉาก"></button>
+              <button class="hotspot decoy-ground-deer" type="button" data-decoy aria-label="ตรวจสอบกวางที่นอนอยู่บนพื้นในฉาก"></button>
+              <button class="hotspot decoy-standing-person" type="button" data-decoy aria-label="ตรวจสอบผู้ชายที่ยืนหันหลังในฉาก"></button>
+            </div>
+
+            <aside class="evidence-panel">
+              <h2 class="evidence-heading">สมุดหลักฐาน <span class="evidence-count" id="evidence-count">0/3</span></h2>
+              <div class="evidence-list" id="evidence-list">
+                <p class="empty-journal">สิ่งของที่ค้นพบจะมีภาพเก็บไว้ตรงนี้ ลองถามไกด์หรือสังเกตฉากก่อน</p>
+              </div>
+            </aside>
+          </div>
+
+          <div class="game-footer">
+            <div>
+              <button class="activity-start" id="launch-activity" type="button">ทำกิจกรรม</button>
+            </div>
+            <button class="next-stage-shortcut hidden" id="next-stage-shortcut" type="button">ไปด่านถัดไป →</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div class="sound-control" aria-label="ตั้งค่าเสียงเกม">
+    <button id="sound-toggle" type="button" aria-label="ปิดเสียง" aria-pressed="false" title="ปิดเสียง">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M3 9v6h4l5 4V5L7 9H3Z" fill="currentColor"/>
+        <path class="sound-wave" d="M15 9a4 4 0 0 1 0 6m2-9a7 7 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path class="mute-slash" d="m15 9 6 6m0-6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+  <div class="notice-toast hidden" id="notice-toast" role="status" aria-live="polite"></div>
+
+  <dialog class="game-dialog" id="evidence-dialog">
+    <button class="dialog-close" type="button" aria-label="ปิด">×</button>
+    <div id="evidence-dialog-content"></div>
+  </dialog>
+  <dialog class="game-dialog" id="activity-dialog">
+    <button class="dialog-close" type="button" aria-label="ปิด">×</button>
+    <h2>กิจกรรมฝึกคิด</h2>
+    <span class="question-type" id="question-type"></span>
+    <p class="question-text" id="question-text"></p>
+    <div class="answer-list" id="answer-list"></div>
+    <p class="answer-feedback" id="answer-feedback" role="status" aria-live="polite"></p>
+    <button class="action-button next-question" id="next-question" type="button">ข้อต่อไป</button>
+    <button class="light-button review-button" id="review-evidence" type="button">กลับไปเรียนรู้จากฉากและหลักฐาน</button>
+  </dialog>
+  <dialog class="game-dialog" id="evidence-required-dialog">
+    <button class="dialog-close" type="button" aria-label="ปิด">×</button>
+    <h2>ยังรวบรวมหลักฐานไม่ครบ</h2>
+    <p id="evidence-required-message">ก่อนเริ่มกิจกรรม ลองค้นหาหลักฐานให้ครบทั้ง 3 ชิ้น แล้วกลับมาทำกิจกรรมกันนะ</p>
+    <p class="evidence-meta">ดูรายการหลักฐานที่พบได้ในสมุดด้านขวา แล้วกลับไปสำรวจฉากต่อได้เลย</p>
+    <button class="action-button" id="return-to-scene" type="button">กลับไปสำรวจต่อ</button>
+  </dialog>
+  <dialog class="game-dialog" id="guide-dialog">
+    <button class="dialog-close" type="button" aria-label="ปิด">×</button>
+    <h2>คุยกับไกด์นักสืบ</h2>
+    <p class="evidence-meta">ไกด์ตอบจากข้อมูลในเกม ลองถามเรื่องยุคหินเก่าหรือขอคำใบ้สิ่งของในฉาก</p>
+    <div class="chat-log" id="guide-chat-log" role="log" aria-live="polite" aria-label="บทสนทนากับไกด์นักสืบ">
+      <div class="chat-message">สวัสดี! ลองสังเกตเพิงผาและก้อนหินที่มีรอยกะเทาะนะ ถ้าอยากได้คำใบ้ ถามฉันได้เลย</div>
+    </div>
+    <form class="chat-form" id="guide-chat-form">
+      <input id="guide-chat-input" type="text" maxlength="160" placeholder="พิมพ์คำถามถึงไกด์..." aria-label="พิมพ์คำถามถึงไกด์" required>
+      <button class="action-button" type="submit">ส่ง</button>
+    </form>
+    <div class="suggested-questions" aria-label="คำถามแนะนำ">
+      <button type="button" data-guide-question="มีคำใบ้อะไรบ้าง">ขอคำใบ้</button>
+      <button type="button" data-guide-question="เครื่องมือหินใช้ทำอะไร">เครื่องมือหินใช้ทำอะไร</button>
+      <button type="button" data-guide-question="ยุคหินเก่าคืออะไร">ยุคหินเก่าคืออะไร</button>
+    </div>
+    <p class="evidence-meta" id="scene-caveat">ฉากนี้เป็นภาพจำลองจากหลักฐานหลายแหล่ง ไม่ใช่ภาพหรือแผนที่ของแหล่งโบราณคดีแห่งใดแห่งหนึ่ง</p>
+  </dialog>
+  <script>
+    const password = document.getElementById('password');
+    const togglePassword = document.getElementById('toggle-password');
+    const form = document.getElementById('login-form');
+    const status = document.getElementById('login-status');
+    const views = ['login-view', 'teacher-view', 'student-view', 'oldstone-view'];
+    const accounts = {
+      krumhon: { password: '2026', role: 'teacher', name: 'ครูหมอน' },
+      '1111': { password: '1111', role: 'student', name: 'นักเรียนตัวอย่าง 1' }
+    };
+    let currentUser = sessionStorage.getItem('naksueb.currentUser') || '';
+    let foundEvidence = new Set();
+    let activityCount = 0;
+    let currentQuestion = null;
+
+    const evidenceData = {
+      shelter: {
+        title: 'เพิงผาถ้ำลอด',
+        text: 'กรมศิลปากรยกเพิงผาถ้ำลอด อำเภอปางมะผ้า จังหวัดแม่ฮ่องสอน เป็นตัวอย่างแหล่งโบราณคดีสมัยหินเก่า',
+        tells: 'แหล่งโบราณคดีช่วยให้นักโบราณคดีศึกษาร่องรอยของผู้คนในอดีต',
+        limit: 'ฉากที่เห็นเป็นภาพจำลอง ไม่ใช่ภาพหรือแผนที่ของเพิงผาถ้ำลอด และข้อมูลนี้ไม่ได้บอกว่าผู้คนทุกกลุ่มอยู่ในถ้ำ',
+        source: 'ข้อมูลสมัยหินเก่าและตัวอย่างแหล่งโบราณคดี — กรมศิลปากร'
+      },
+      chopper: {
+        title: 'เครื่องมือสับตัด',
+        text: 'เป็นเครื่องมือหินที่กะเทาะให้เกิดเหลี่ยมคม กรมศิลปากรอธิบายว่าอาจใช้สับ ตัด ขุด หรือทุบ',
+        tells: 'ผู้คนรู้จักกะเทาะหินให้มีคมเพื่อทำเป็นเครื่องมือ',
+        limit: 'รูปร่างเพียงอย่างเดียวไม่ได้ยืนยันว่าเครื่องมือชิ้นใดใช้ทำงานอะไรแน่นอน',
+        source: 'ข้อมูลสมัยหินเก่าและเครื่องมือหิน — กรมศิลปากร'
+      },
+      flake: {
+        title: 'เครื่องมือสะเก็ดหิน',
+        text: 'สะเก็ดหินที่กะเทาะออกมาอาจนำมาประดิษฐ์เป็นเครื่องมือ กรมศิลปากรอธิบายการใช้ว่า ตัด ฟัน หรือเฉือน',
+        tells: 'การกะเทาะหินทำให้ได้ทั้งก้อนหินที่มีคมและสะเก็ดหินที่นำไปทำเครื่องมือได้',
+        limit: 'ภาพในฉากเป็นภาพจำลอง ไม่ได้แสดงวัตถุจากแหล่งขุดค้นแห่งใดโดยเฉพาะ',
+        source: 'ข้อมูลสมัยหินเก่าและเครื่องมือหิน — กรมศิลปากร'
+      }
+    };
+
+    const questionPool = [
+      {
+        type: 'ทายจากคำบรรยาย',
+        text: 'ฉันเป็นเครื่องมือหินที่ถูกกะเทาะให้เกิดเหลี่ยมคม อาจใช้สับ ตัด ขุด หรือทุบ ฉันคืออะไร?',
+        options: ['เครื่องมือสับตัด', 'ขวานหินขัด', 'ภาชนะดินเผา'], answer: 0,
+        hint: 'ลองนึกถึงชื่อที่บอกการใช้งานว่า “สับ” และ “ตัด”',
+        explain: 'กรมศิลปากรอธิบายว่าเครื่องมือสับตัดเป็นเครื่องมือหินกะเทาะ และสันนิษฐานว่าใช้ทำงานหลายอย่าง'
+      },
+      {
+        type: 'ทายจากคำบรรยาย',
+        text: 'หินชิ้นเล็กที่กะเทาะออกจากก้อนหิน แล้วนำมาทำเป็นเครื่องมือ เรียกว่าอะไร?',
+        options: ['เครื่องมือสะเก็ดหิน', 'ลูกปัดสำริด', 'หม้อสามขา'], answer: 0,
+        hint: 'ชื่อของสิ่งนี้มาจากเศษหินที่กะเทาะออกมา',
+        explain: 'สะเก็ดหินที่กะเทาะออกมาสามารถนำมาประดิษฐ์เป็นเครื่องมือสะเก็ดหินได้'
+      },
+      {
+        type: 'เลือกคำอธิบายจากหลักฐาน',
+        text: 'เมื่อพบเครื่องมือสับตัดและเครื่องมือสะเก็ดหิน ข้อใดอธิบายหลักฐานได้เหมาะสมที่สุด?',
+        options: ['ผู้คนรู้จักกะเทาะหินทำเครื่องมือหลายรูปแบบ', 'ผู้คนใช้เครื่องมือเหล็กทำเกษตร', 'ผู้คนเก็บอาหารในหม้อดิน'], answer: 0,
+        hint: 'เลือกคำตอบที่พูดถึงสิ่งซึ่งหลักฐานทั้งสองชิ้นแสดงให้เห็น',
+        explain: 'หลักฐานทั้งสองเป็นเครื่องมือหินกะเทาะ จึงช่วยให้เห็นการทำเครื่องมือจากหิน'
+      },
+      {
+        type: 'เลือกคำอธิบายจากหลักฐาน',
+        text: 'เครื่องมือสะเก็ดหินช่วยให้เราเข้าใจเรื่องใดได้มากที่สุด?',
+        options: ['มีการนำสะเก็ดหินมาทำเป็นเครื่องมือ', 'มีการหลอมสำริดเป็นเครื่องประดับ', 'มีการปลูกข้าวในนาขนาดใหญ่'], answer: 0,
+        hint: 'ดูชื่อหลักฐานว่าเป็นหินชนิดใดและถูกนำไปทำอะไร',
+        explain: 'หลักฐานนี้แสดงว่ามีการนำสะเก็ดหินที่กะเทาะออกมามาทำเป็นเครื่องมือ'
+      },
+      {
+        type: 'ถูกหรือผิด',
+        text: 'เครื่องมือสับตัดในสมัยหินเก่าทำจากโลหะเพื่อใช้ตัดไม้ ข้อความนี้ถูกหรือผิด?',
+        options: ['ถูก', 'ผิด'], answer: 1,
+        hint: 'หลักฐานที่เราสำรวจเป็นเครื่องมือที่ทำจากวัสดุอะไร?',
+        explain: 'ผิด เครื่องมือสับตัดตัวอย่างนี้ทำจากหินที่กะเทาะให้เกิดคม ไม่ใช่โลหะ'
+      },
+      {
+        type: 'ถูกหรือผิด',
+        text: 'เครื่องมือสะเก็ดหินทำจากสะเก็ดที่กะเทาะออกมา และอาจใช้ตัด ฟัน หรือเฉือน ข้อความนี้ถูกหรือผิด?',
+        options: ['ถูก', 'ผิด'], answer: 0,
+        hint: 'ลองเปิดดูหลักฐาน “เครื่องมือสะเก็ดหิน” ในสมุดหลักฐาน',
+        explain: 'ถูก กรมศิลปากรอธิบายว่าเครื่องมือสะเก็ดหินทำจากสะเก็ดหินและใช้ตัด ฟัน หรือเฉือนได้'
+      }
+    ];
+
+    const middleStoneEvidenceData = {
+      core: {
+        title: 'เครื่องมือหินแบบหัวบิเนียน',
+        text: 'กรมศิลปากรอธิบายว่าสมัยหินกลางมีการเลือกชนิดหินและกะเทาะให้ได้รูปทรงเหมาะกับการใช้งาน เรียกว่าเครื่องมือหินแบบหัวบิเนียน',
+        tells: 'ผู้คนพัฒนาเทคนิคเลือกหินและกะเทาะหินให้เป็นเครื่องมือที่เหมาะกับงานมากขึ้น',
+        limit: 'ฉากนี้เป็นภาพจำลอง ไม่ใช่วัตถุจากถ้ำผีแมนหรือแหล่งโบราณคดีแห่งใดแห่งหนึ่ง',
+        source: 'การแบ่งยุคก่อนประวัติศาสตร์ด้วยเทคโนโลยีการผลิตเครื่องมือ — กรมศิลปากร',
+        thumbPosition: '59% 99%',
+        largePosition: '58% 97%'
+      },
+      scraper: {
+        title: 'เครื่องมือหินขนาดเล็ก',
+        text: 'เครื่องมือหินกลางมีขนาดเล็กและกะเทาะได้ละเอียดขึ้น บางรูปทรงเหมาะกับงานอย่างการขูดหรือเจาะ',
+        tells: 'เครื่องมือมีรูปทรงและขนาดหลากหลายขึ้นตามงานที่ใช้',
+        limit: 'จากภาพจำลองเพียงอย่างเดียว เรายืนยันหน้าที่ของวัตถุชิ้นใดชิ้นหนึ่งไม่ได้แน่นอน',
+        source: 'การแบ่งยุคก่อนประวัติศาสตร์ด้วยเทคโนโลยีการผลิตเครื่องมือ — กรมศิลปากร',
+        thumbPosition: '89% 75%',
+        largePosition: '90% 74%'
+      },
+      middleflake: {
+        title: 'สะเก็ดหินจากการกะเทาะ',
+        text: 'ร่องรอยสะเก็ดที่หลุดจากก้อนหินช่วยให้เห็นขั้นตอนการกะเทาะเพื่อทำเครื่องมือ',
+        tells: 'นักโบราณคดีศึกษาทั้งตัวเครื่องมือและร่องรอยการผลิตเพื่อทำความเข้าใจเทคโนโลยีในอดีต',
+        limit: 'สะเก็ดหินในภาพเป็นภาพจำลอง ไม่ได้มาจากแหล่งขุดค้นจริง',
+        source: 'การแบ่งยุคก่อนประวัติศาสตร์ด้วยเทคโนโลยีการผลิตเครื่องมือ — กรมศิลปากร',
+        thumbPosition: '43% 91%',
+        largePosition: '43% 92%'
+      }
+    };
+
+    const middleStoneQuestionPool = [
+      {
+        type: 'ทายจากคำบรรยาย',
+        text: 'ฉันทำจากหินที่เลือกมาแล้วกะเทาะให้เป็นรูปทรงเหมาะกับงาน เรียกว่าอะไร?',
+        options: ['เครื่องมือหินแบบหัวบิเนียน', 'เครื่องมือหินขัด', 'เครื่องมือสำริด'], answer: 0,
+        hint: 'ชื่อเรียกของเครื่องมือหินกลางในข้อมูลกรมศิลปากรขึ้นต้นด้วย “หัว...”',
+        explain: 'เครื่องมือหินแบบหัวบิเนียนเป็นหลักฐานที่ใช้กล่าวถึงเทคโนโลยีหินกลางในประเทศไทย'
+      },
+      {
+        type: 'ทายจากคำบรรยาย',
+        text: 'ฉันเป็นเศษหินที่หลุดออกมาระหว่างการกะเทาะ ช่วยบอกขั้นตอนการทำเครื่องมือ ฉันคืออะไร?',
+        options: ['สะเก็ดหิน', 'ลูกปัด', 'หม้อดินเผา'], answer: 0,
+        hint: 'ชื่อนี้บอกว่าเป็นชิ้นที่กะเทาะออกจากก้อนหิน',
+        explain: 'สะเก็ดหินเป็นร่องรอยที่ช่วยศึกษาการกะเทาะและทำเครื่องมือ'
+      },
+      {
+        type: 'เลือกคำอธิบายจากหลักฐาน',
+        text: 'พบเครื่องมือหินหลายรูปทรงและขนาดเล็กลง ข้อใดอธิบายหลักฐานนี้ได้เหมาะสมที่สุด?',
+        options: ['มีการพัฒนาเทคนิคกะเทาะให้ได้เครื่องมือเหมาะกับงานหลากหลายขึ้น', 'เริ่มใช้เครื่องจักรทำเครื่องมือ', 'ทุกคนเลิกใช้หินแล้วหันไปใช้โลหะ'], answer: 0,
+        hint: 'ลองเชื่อมโยงรูปร่างเครื่องมือกับการเลือกหินและเทคนิคการกะเทาะ',
+        explain: 'ข้อมูลกรมศิลปากรกล่าวถึงการเลือกหินและกะเทาะให้ละเอียดและเหมาะกับการใช้งานมากขึ้น'
+      },
+      {
+        type: 'เลือกคำอธิบายจากหลักฐาน',
+        text: 'เมื่อพบเครื่องมือหินกับสะเก็ดหินในฉาก เราสรุปอะไรได้อย่างระมัดระวังที่สุด?',
+        options: ['มีการกะเทาะหินเพื่อทำเครื่องมือ', 'ทุกชิ้นใช้ทำหน้าที่เดียวกันแน่นอน', 'คนในยุคนี้มีเครื่องมือเหล็ก'], answer: 0,
+        hint: 'เลือกข้อสรุปที่บอกได้จากร่องรอยการผลิต โดยไม่เดาเกินหลักฐาน',
+        explain: 'เครื่องมือและสะเก็ดหินช่วยให้ศึกษากระบวนการทำเครื่องมือ แต่ไม่ยืนยันหน้าที่ของทุกชิ้น'
+      },
+      {
+        type: 'ถูกหรือผิด',
+        text: 'เครื่องมือหินแบบหัวบิเนียนเป็นหลักฐานที่กล่าวถึงในสมัยหินกลาง ข้อความนี้ถูกหรือผิด?',
+        options: ['ถูก', 'ผิด'], answer: 0,
+        hint: 'ดูชื่อเครื่องมือหินกลางที่ไกด์แนะนำในฉาก',
+        explain: 'ถูก กรมศิลปากรยกเครื่องมือหินแบบหัวบิเนียนเป็นตัวอย่างของสมัยหินกลาง'
+      },
+      {
+        type: 'ถูกหรือผิด',
+        text: 'เครื่องมือหินขนาดเล็กบางรูปทรงอาจใช้ขูดหรือเจาะได้ ข้อความนี้ถูกหรือผิด?',
+        options: ['ถูก', 'ผิด'], answer: 0,
+        hint: 'เครื่องมือที่มีรูปทรงต่างกันอาจเหมาะกับงานต่างกัน',
+        explain: 'ถูก ข้อมูลกรมศิลปากรยกการเจาะและขูดเป็นตัวอย่างการใช้งานที่เป็นไปได้'
+      }
+    ];
+
+    const neolithicEvidence = {
+  polishedAxe:{title:'ขวานหินขัด',text:'ขวานหินขัดเป็นเครื่องมือสำคัญที่พบในแหล่งโบราณคดียุคหินใหม่',tells:'ผู้คนรู้จักขัดแต่งหินให้เป็นเครื่องมือ',limit:'ภาพฉากนี้เป็นภาพประกอบ ไม่ใช่วัตถุที่ขุดพบจริง',source:'เครื่องมือทำมาหากินยุคหินใหม่ — กรมศิลปากร',thumbPosition:'9% 88%',largePosition:'9% 88%',thumbSize:'310% auto',largeSize:'150% auto'},
+  pottery:{title:'ภาชนะดินเผา',text:'ภาชนะดินเผาใช้บรรจุและปรุงอาหาร เป็นหลักฐานเครื่องใช้จากแหล่งก่อนประวัติศาสตร์',tells:'ผู้คนทำภาชนะจากวัสดุรอบตัวเพื่อใช้ในชีวิตประจำวัน',limit:'รูปทรงภาชนะในภาพเป็นภาพประกอบ ไม่ได้ระบุรูปแบบของแหล่งใดโดยเฉพาะ',source:'เครื่องมือทำมาหากินยุคหินใหม่ — กรมศิลปากร',thumbPosition:'37% 78%',largePosition:'37% 78%',thumbSize:'340% auto',largeSize:'170% auto'},
+  farmingArea:{title:'แปลงเพาะปลูก',text:'ฉากนี้แสดงการเพาะปลูกเป็นภาพประกอบวิถีชุมชน ส่วนข้อมูลกรมศิลปากรกล่าวถึงการใช้เครื่องมือหินขัดกับงานเกษตรกรรม',tells:'เครื่องมือหินขัดมีประโยชน์กับการทำเกษตรกรรม',limit:'แปลงในภาพเป็นฉากจำลอง ไม่ใช่หลักฐานพืชจากการขุดค้นแห่งใดแห่งหนึ่ง',source:'เครื่องมือทำมาหากินยุคหินใหม่ — กรมศิลปากร',thumbPosition:'78% 65%',largePosition:'78% 65%',thumbSize:'300% auto',largeSize:'160% auto'}
+};
+const bronzeEvidence = {
+  castingMould:{title:'เบ้าหลอมและแม่พิมพ์',text:'เบ้าหลอมและแม่พิมพ์เป็นร่องรอยที่ช่วยศึกษากิจกรรมการหล่อโลหะ',tells:'ช่างรู้จักให้ความร้อนและขึ้นรูปโลหะเป็นสิ่งของ',limit:'ฉากนี้รวมกิจกรรมจากตัวอย่างหลายแหล่ง ไม่ใช่ภาพเหตุการณ์จริง',source:'การแบ่งยุคสมัยด้วยเทคโนโลยีการผลิตเครื่องมือ — กรมศิลปากร',thumbPosition:'44% 84%',largePosition:'44% 84%',thumbSize:'300% auto',largeSize:'155% auto'},
+  bronzeAxe:{title:'ขวานสำริด',text:'ขวานสำริดเป็นหนึ่งในเครื่องมือโลหะที่พบในแหล่งโบราณคดีก่อนประวัติศาสตร์',tells:'ผู้คนผลิตเครื่องมือจากสำริด ซึ่งเป็นโลหะผสมทองแดงกับดีบุก',limit:'ไม่อาจระบุหน้าที่ของวัตถุทุกชิ้นจากภาพจำลองเพียงอย่างเดียว',source:'การแบ่งยุคสมัยด้วยเทคโนโลยีการผลิตเครื่องมือ — กรมศิลปากร',thumbPosition:'11% 97%',largePosition:'11% 97%',thumbSize:'320% auto',largeSize:'155% auto'},
+  bronzeBangle:{title:'กำไลสำริด',text:'กำไลเป็นตัวอย่างเครื่องประดับสำริดที่พบในหลักฐานทางโบราณคดี',tells:'สำริดถูกนำไปทำได้ทั้งเครื่องมือและเครื่องประดับ',limit:'ภาพกำไลเป็นภาพประกอบ ไม่ได้แสดงวัตถุที่พบจริง',source:'การแบ่งยุคสมัยด้วยเทคโนโลยีการผลิตเครื่องมือ — กรมศิลปากร',thumbPosition:'40% 95%',largePosition:'40% 95%',thumbSize:'320% auto',largeSize:'160% auto'}
+};
+const ironEvidence = {
+  ironAxe:{title:'ขวานเหล็ก',text:'ขวานเหล็กเป็นหนึ่งในหลักฐานที่เกี่ยวข้องกับกิจกรรมการผลิตและใช้เหล็ก',tells:'เทคโนโลยีการถลุงและขึ้นรูปเหล็กพัฒนาขึ้น',limit:'รูปวัตถุในภาพเป็นภาพจำลอง ไม่ได้มาจากแหล่งขุดค้นจริง',source:'การแบ่งยุคสมัยด้วยเทคโนโลยีการผลิตเครื่องมือ — กรมศิลปากร',thumbPosition:'67% 94%',largePosition:'67% 94%',thumbSize:'300% auto',largeSize:'155% auto'},
+  spearhead:{title:'ใบหอกเหล็ก',text:'ใบหอกเหล็กเป็นหลักฐานเครื่องมือเหล็กที่พบในแหล่งโบราณคดีสมัยเหล็ก',tells:'มีการผลิตเครื่องมือเหล็กหลายรูปแบบ',limit:'ภาพจำลองนี้ไม่อาจบอกวิธีใช้ของวัตถุชิ้นจริงได้แน่นอน',source:'การแบ่งยุคสมัยด้วยเทคโนโลยีการผลิตเครื่องมือ — กรมศิลปากร',thumbPosition:'87% 91%',largePosition:'87% 91%',thumbSize:'300% auto',largeSize:'155% auto'},
+  ironBracelet:{title:'เตาถลุงเหล็ก',text:'การถลุงเหล็กเป็นพัฒนาการทางเทคโนโลยีที่สำคัญของสมัยเหล็ก ภาพเตานี้เป็นภาพจำลองประกอบการเรียนรู้',tells:'ผู้คนเรียนรู้การให้ความร้อนเพื่อแปรรูปแร่เป็นโลหะ',limit:'เตาในภาพไม่ได้จำลองแหล่งโบราณคดีแห่งใดโดยเฉพาะ',source:'การแบ่งยุคสมัยด้วยเทคโนโลยีการผลิตเครื่องมือ — กรมศิลปากร',thumbPosition:'10% 55%',largePosition:'10% 55%',thumbSize:'320% auto',largeSize:'160% auto'}
+};
+const makeQuestions=(entries)=>entries.map(([type,text,options,answer,hint,explain])=>({type,text,options,answer,hint,explain}));
+const neolithicQuestions=makeQuestions([
+ ['ทายจากคำบรรยาย','ฉันเป็นเครื่องมือหินที่ถูกขัดแต่งจนผิวเรียบขึ้น มักเรียกว่าอะไร?',['ขวานหินขัด','ขวานสำริด','ใบหอกเหล็ก'],0,'นึกถึงเครื่องมือหินของยุคหินใหม่','ขวานหินขัดเป็นหลักฐานสำคัญของยุคหินใหม่'],['ทายจากคำบรรยาย','ฉันทำจากดิน ใช้บรรจุหรือปรุงอาหาร ฉันคืออะไร?',['ภาชนะดินเผา','เบ้าหลอมสำริด','ใบหอกเหล็ก'],0,'ใช้วัสดุจากพื้นดินมาปั้นและเผา','ภาชนะดินเผาเป็นเครื่องใช้ในชีวิตประจำวัน'],['เลือกคำอธิบายจากหลักฐาน','เมื่อพบขวานหินขัดกับแท่นหินลับ ข้อใดสรุปได้เหมาะสมที่สุด?',['มีการทำและดูแลเครื่องมือหิน','มีการหลอมเหล็ก','มีการใช้เครื่องจักร'],0,'เลือกข้อที่กล่าวถึงหลักฐานทั้งสองชิ้น','หลักฐานทั้งสองเกี่ยวข้องกับการทำและดูแลเครื่องมือหิน'],['เลือกคำอธิบายจากหลักฐาน','ภาชนะดินเผาและเครื่องมือหินช่วยให้เราเข้าใจอะไรได้มากที่สุด?',['ผู้คนทำเครื่องใช้จากวัสดุรอบตัว','ทุกคนทำอาชีพเหมือนกัน','มีตลาดค้าขายแบบปัจจุบัน'],0,'อย่าสรุปเกินกว่าสิ่งของที่พบ','หลักฐานแสดงการทำเครื่องใช้ แต่ไม่ได้บอกอาชีพของทุกคน'],['ถูกหรือผิด','ขวานหินขัดเป็นหลักฐานที่พบในยุคหินใหม่ ข้อความนี้ถูกหรือผิด?',['ถูก','ผิด'],0,'ขวานหินขัดเป็นเครื่องมือเด่นของยุคนี้','ถูก ขวานหินขัดเป็นตัวอย่างหลักฐานยุคหินใหม่'],['ถูกหรือผิด','ขวานหินขัดทำจากเหล็ก ข้อความนี้ถูกหรือผิด?',['ถูก','ผิด'],1,'พิจารณาคำว่า “หินขัด”','ผิด เครื่องมือนี้ทำจากหินที่ผ่านการขัดแต่ง']
+]);
+const bronzeQuestions=makeQuestions([
+ ['ทายจากคำบรรยาย','ฉันเป็นโลหะผสมที่มีทองแดงและดีบุกเป็นส่วนสำคัญ ฉันคืออะไร?',['สำริด','เหล็ก','หินขัด'],0,'ชื่อของยุคนี้ตรงกับชื่อโลหะ','สำริดเป็นโลหะผสมที่มีทองแดงและดีบุกเป็นส่วนสำคัญ'],['ทายจากคำบรรยาย','ฉันเป็นร่องรอยที่ใช้ขึ้นรูปโลหะหลอมให้เป็นทรง ฉันคืออะไร?',['แม่พิมพ์','สะเก็ดหิน','แท่นหินลับ'],0,'ช่างเทโลหะลงในสิ่งนี้','แม่พิมพ์ช่วยกำหนดรูปทรงของวัตถุ'],['เลือกคำอธิบายจากหลักฐาน','พบเบ้าหลอม แม่พิมพ์ และขวานสำริด ข้อใดมีหลักฐานรองรับ?',['มีการหล่อและทำเครื่องมือสำริด','มีการทำขวานจากพลาสติก','มีการใช้เครื่องจักรไอน้ำ'],0,'พิจารณาความเชื่อมโยงของอุปกรณ์กับวัตถุ','อุปกรณ์หล่อและขวานสำริดสนับสนุนว่ามีกิจกรรมโลหกรรม'],['เลือกคำอธิบายจากหลักฐาน','เมื่อพบกำไลสำริดกับขวานสำริด ข้อใดเหมาะสมที่สุด?',['สำริดถูกทำเป็นทั้งเครื่องประดับและเครื่องมือ','ทุกคนสวมกำไลเหมือนกัน','ใช้เหล็กแทนสำริดทั้งหมดแล้ว'],0,'หลักฐานมีทั้งของสวมใส่และของใช้','สำริดถูกนำไปทำวัตถุหลายประเภท'],['ถูกหรือผิด','สำริดมีทองแดงและดีบุกเป็นส่วนผสมหลัก ข้อความนี้ถูกหรือผิด?',['ถูก','ผิด'],0,'ลองนึกถึงคำอธิบายโลหะสำริด','ถูก สำริดเป็นโลหะผสมทองแดงกับดีบุก'],['ถูกหรือผิด','ขวานสำริดเป็นเครื่องมือที่ทำจากเหล็ก ข้อความนี้ถูกหรือผิด?',['ถูก','ผิด'],1,'ชื่อของวัตถุบอกชนิดโลหะ','ผิด ขวานสำริดทำจากสำริด ไม่ใช่เหล็ก']
+]);
+const ironQuestions=makeQuestions([
+ ['ทายจากคำบรรยาย','ฉันเป็นเครื่องมือเหล็ก มีคมกว้างและด้ามสำหรับจับ ฉันคืออะไร?',['ขวานเหล็ก','ขวานหินขัด','กำไลสำริด'],0,'ชื่อบอกชนิดโลหะและรูปร่างเครื่องมือ','ขวานเหล็กเป็นหลักฐานสำคัญของสมัยเหล็ก'],['ทายจากคำบรรยาย','ฉันเป็นส่วนปลายแหลมของอาวุธที่ทำจากเหล็ก ฉันคืออะไร?',['ใบหอกเหล็ก','แม่พิมพ์สำริด','สะเก็ดหิน'],0,'นึกถึงอาวุธที่มีปลายแหลม','ใบหอกเหล็กเป็นตัวอย่างหลักฐานสมัยเหล็ก'],['เลือกคำอธิบายจากหลักฐาน','พบขวานเหล็กกับใบหอกเหล็ก ข้อใดอธิบายได้เหมาะสมที่สุด?',['มีการผลิตเครื่องมือเหล็กหลายแบบ','ผู้คนใช้แต่เครื่องมือหิน','ทุกชิ้นเป็นเครื่องประดับ'],0,'พิจารณาวัตถุทั้งสองเป็นเครื่องมือชนิดใด','หลักฐานแสดงเครื่องมือเหล็กมากกว่าหนึ่งรูปแบบ'],['เลือกคำอธิบายจากหลักฐาน','พบกำไลเหล็กและเครื่องมือเหล็ก ข้อใดรองรับจากหลักฐานได้?',['เหล็กถูกนำมาทำสิ่งของหลายประเภท','ทุกคนเป็นช่างตีเหล็ก','มีโรงงานสมัยใหม่'],0,'ข้อสรุปควรอยู่ในขอบเขตสิ่งของที่พบ','หลักฐานชี้ว่าเหล็กทำได้ทั้งเครื่องประดับและเครื่องมือ'],['ถูกหรือผิด','ใบหอกเหล็กเป็นหลักฐานที่เกี่ยวข้องกับสมัยเหล็ก ข้อความนี้ถูกหรือผิด?',['ถูก','ผิด'],0,'อ่านชื่อวัตถุแล้วเชื่อมกับยุค','ถูก ใบหอกเหล็กเป็นตัวอย่างหลักฐานสมัยเหล็ก'],['ถูกหรือผิด','ขวานเหล็กเป็นหลักฐานที่ทำจากหิน ข้อความนี้ถูกหรือผิด?',['ถูก','ผิด'],1,'พิจารณาวัสดุในชื่อวัตถุ','ผิด ขวานเหล็กทำจากเหล็ก']
+]);
+
+const stages = {
+ oldstone:{id:'oldstone',title:'ยุคหินเก่า',image:'old-stone-scene.png',evidenceData,questionPool,sourceUrl:'https://www.finearts.go.th/fad4/view/45282-',subtitle:'สังเกตเครื่องมือหินกะเทาะและร่องรอยจากอดีต',caveat:'ฉากนี้เป็นภาพจำลองจากหลักฐานหลายแหล่ง ไม่ใช่ภาพหรือแผนที่ของแหล่งโบราณคดีแห่งใดแห่งหนึ่ง',targets:[{key:'shelter',css:'hotspot-shelter',type:'evidence'},{key:'chopper',css:'hotspot-chopper',type:'evidence'},{key:'flake',css:'hotspot-flakes',type:'evidence'},{css:'decoy-girl',type:'decoy',label:'เด็กผู้หญิงในฉาก'},{css:'decoy-deer',type:'decoy',label:'กวางในฉาก'},{css:'decoy-ground-deer',type:'decoy',label:'กวางที่นอนอยู่บนพื้นในฉาก'},{css:'decoy-standing-person',type:'decoy',label:'ผู้ชายที่ยืนหันหลังในฉาก'}],lifeLayers:['living-person-old','living-deer-old'],intro:'ลองสังเกตสิ่งของในฉากก่อนนะ ถ้ายังไม่แน่ใจ กดคุยกับฉันเพื่อขอคำใบ้ได้',greeting:'สวัสดี! ลองสังเกตเพิงผาและก้อนหินที่มีรอยกะเทาะนะ ถ้าอยากได้คำใบ้ถามฉันได้',guideQuestions:[['มีคำใบ้อะไรบ้าง','ขอคำใบ้'],['เครื่องมือหินใช้ทำอะไร','เครื่องมือหินใช้ทำอะไร'],['ยุคหินเก่าคืออะไร','ยุคหินเก่า']]},
+ middlestone:{id:'middlestone',title:'ยุคหินกลาง',image:'middle-stone-scene.png',evidenceData:middleStoneEvidenceData,questionPool:middleStoneQuestionPool,sourceUrl:'https://www.finearts.go.th/fad4/view/45282-',subtitle:'สังเกตการเลือกหินและเทคนิคกะเทาะที่ละเอียดขึ้น',caveat:'ภาพนี้เป็นฉากจำลองเพื่อการเรียนรู้ ไม่ใช่ภาพจำลองแหล่งโบราณคดีเฉพาะแห่ง',targets:[{key:'core',css:'middle-core',type:'evidence'},{key:'scraper',css:'middle-scraper',type:'evidence'},{key:'middleflake',css:'middle-flake',type:'evidence'},{css:'middle-decoy-gatherer',type:'decoy',label:'คนกำลังเก็บผลไม้'},{css:'middle-decoy-toolmaker',type:'decoy',label:'คนกำลังทำเครื่องมือ'},{css:'middle-decoy-stream',type:'decoy',label:'คนที่อยู่ริมลำธาร'}],lifeLayers:['living-person-middle','living-person-middle-two'],intro:'มองหาหินที่ถูกกะเทาะเป็นรูปทรง และเศษหินรอบ ๆ นะ ถ้าต้องการคำใบ้ถามฉันได้',greeting:'สวัสดี! ฉากนี้เป็นยุคหินกลาง ลองสังเกตเครื่องมือหินที่ถูกกะเทาะและสะเก็ดหินรอบ ๆ นะ',guideQuestions:[['มีคำใบ้อะไรบ้าง','ขอคำใบ้'],['เครื่องมือหัวบิเนียนคืออะไร','เครื่องมือหัวบิเนียน'],['ยุคหินกลางต่างอย่างไร','ยุคหินกลางต่างอย่างไร']]},
+ neolithic:{id:'neolithic',title:'ยุคหินใหม่',image:'neolithic-scene.png',evidenceData:neolithicEvidence,questionPool:neolithicQuestions,sourceUrl:'https://finearts.go.th/storage/contents/2023/06/file/7jzLHhzb8cRR94Q9L9c03o58exlNqMqebUkiRJVy.pdf',subtitle:'สังเกตเครื่องมือหินขัดและสิ่งของในชุมชน',caveat:'ฉากนี้เป็นภาพประกอบเพื่อการเรียนรู้ ไม่ใช่การจำลองแหล่งโบราณคดีแห่งใดโดยเฉพาะ',targets:[{key:'polishedAxe',css:'neo-axe',type:'evidence'},{key:'pottery',css:'neo-pot',type:'evidence'},{key:'farmingArea',css:'neo-crop',type:'evidence'},{css:'neo-decoy',type:'decoy',label:'คนกำลังทำงานในฉาก'}],lifeLayers:['living-neolithic'],intro:'ลองมองหาขวานหินขัด ภาชนะ และแท่นหินในฉากนะ ถ้ายังไม่แน่ใจถามคำใบ้ฉันได้',greeting:'สวัสดี! ลองสังเกตเครื่องมือหินขัดกับภาชนะในชุมชนนี้นะ',guideQuestions:[['มีคำใบ้อะไรบ้าง','ขอคำใบ้'],['ขวานหินขัดต่างจากหินกะเทาะไหม','ขวานหินขัด'],['คนใช้ภาชนะทำอะไร','ภาชนะดินเผา']]},
+ bronze:{id:'bronze',title:'ยุคสำริด',image:'bronze-scene.png',evidenceData:bronzeEvidence,questionPool:bronzeQuestions,sourceUrl:'https://www.finearts.go.th/fad4/view/45282-',subtitle:'ตามรอยการหล่อและการใช้เครื่องมือสำริด',caveat:'ภาพนี้เป็นฉากจำลองเพื่อการเรียนรู้ ไม่ใช่ภาพของแหล่งโบราณคดีเฉพาะแห่ง',targets:[{key:'castingMould',css:'bronze-mold',type:'evidence'},{key:'bronzeAxe',css:'bronze-axe',type:'evidence'},{key:'bronzeBangle',css:'bronze-bangle',type:'evidence'},{css:'bronze-decoy',type:'decoy',label:'ช่างกำลังทำงาน'}],lifeLayers:['living-bronze'],intro:'ลองหาแม่พิมพ์หรือเบ้าหลอม ขวานสำริด และกำไลนะ ถ้าติดขัดถามคำใบ้ฉันได้',greeting:'สวัสดี! ฉากนี้มีร่องรอยการทำงานกับโลหะ ลองมองหาเครื่องมือและเครื่องประดับสำริดนะ',guideQuestions:[['มีคำใบ้อะไรบ้าง','ขอคำใบ้'],['สำริดทำจากอะไร','สำริดคืออะไร'],['หลักฐานการหล่อมีอะไร','การหล่อสำริด']]},
+ iron:{id:'iron',title:'ยุคเหล็ก',image:'iron-scene.png',evidenceData:ironEvidence,questionPool:ironQuestions,sourceUrl:'https://www.finearts.go.th/fad4/view/45282-',subtitle:'สังเกตหลักฐานการถลุงและเครื่องมือเหล็ก',caveat:'ภาพนี้เป็นฉากจำลองเพื่อการเรียนรู้ ไม่ใช่ภาพของแหล่งโบราณคดีเฉพาะแห่ง',targets:[{key:'ironAxe',css:'iron-axe',type:'evidence'},{key:'spearhead',css:'iron-spear',type:'evidence'},{key:'ironBracelet',css:'iron-bloom',type:'evidence'},{css:'iron-decoy',type:'decoy',label:'คนที่กำลังสังเกตเตาหลอม'}],lifeLayers:['living-iron'],intro:'ลองหาขวานเหล็ก ใบหอก และเตาถลุงเหล็กในฉาก ถ้าต้องการคำใบ้ถามฉันได้',greeting:'สวัสดี! ฉากนี้ชวนตามรอยการใช้เหล็ก ลองสังเกตเครื่องมือกับเครื่องประดับนะ',guideQuestions:[['มีคำใบ้อะไรบ้าง','ขอคำใบ้'],['เหล็กถูกนำมาทำอะไร','เครื่องมือเหล็ก'],['ใบหอกเป็นหลักฐานอะไร','ใบหอกเหล็ก']]}
+};
+
+    let currentStageId = 'oldstone';
+    let activeStage = stages.oldstone;
+    let evidenceDataForStage = activeStage.evidenceData;
+    let questionPoolForStage = activeStage.questionPool;
+    let stagePassed = false;
+
+    const stageOrder = Object.keys(stages);
+    function isStageUnlocked(stageId, user = currentUser) {
+      const index = stageOrder.indexOf(stageId);
+      if (index < 0) return false;
+      if (index === 0) return true;
+      const previousId = stageOrder[index - 1];
+      const previous = readStudentProgress(user, previousId);
+      return previous.passed && previous.foundEvidence.length >= Object.keys(stages[previousId].evidenceData).length;
+    }
+
+    function renderStageUnlocks() {
+      const list = document.getElementById('stage-list');
+      if (!list) return;
+      list.replaceChildren();
+      stageOrder.forEach((stageId, index) => {
+        const stage = stages[stageId];
+        const unlocked = isStageUnlocked(stageId);
+        const progress = readStudentProgress(currentUser, stageId);
+        const tile = document.createElement('button');
+        tile.type = 'button';
+        tile.className = 'stage-item' + (currentStageId === stageId ? ' active' : '') + (progress.passed ? ' cleared' : '');
+        tile.disabled = !unlocked;
+        tile.dataset.stageSelect = stageId;
+        tile.setAttribute('aria-label', 'ด่าน ' + (index + 1) + ' ' + stage.title + ' ' + (progress.passed ? 'ผ่านแล้ว' : unlocked ? 'พร้อมสำรวจ' : 'ล็อกอยู่'));
+        const number = document.createElement('strong'); number.textContent = String(index + 1);
+        const label = document.createElement('span');
+        label.innerHTML = stage.title + '<br>' + (progress.passed ? 'ผ่านแล้ว' : unlocked ? 'พร้อมสำรวจ' : '🔒 ยังไม่ปลดล็อก');
+        tile.append(number, label);
+        list.appendChild(tile);
+      });
+      renderHistoricalMapUnlock();
+    }
+
+    function isPrehistoryComplete(user = currentUser) {
+      return stageOrder.every((stageId) => {
+        const progress = readStudentProgress(user, stageId);
+        return progress.passed && progress.foundEvidence.length >= Object.keys(stages[stageId].evidenceData).length;
+      });
+    }
+
+    function renderHistoricalMapUnlock() {
+      const unlocked = isPrehistoryComplete();
+      const card = document.getElementById('history-map-card');
+      const button = document.getElementById('open-history');
+      card.classList.toggle('locked', !unlocked);
+      card.setAttribute('aria-disabled', String(!unlocked));
+      card.querySelector('.map-ribbon').textContent = unlocked ? 'แผนที่ 2 · เปิดแล้ว' : 'แผนที่ 2';
+      card.querySelector('p').textContent = unlocked
+        ? 'ปลดล็อกแล้ว ไปยังแผนที่สมัยประวัติศาสตร์'
+        : 'แผนที่นี้จะเปิดเมื่อผ่านครบทั้งห้าด่านสมัยก่อนประวัติศาสตร์';
+      button.disabled = !unlocked;
+      button.textContent = unlocked ? 'เปิดแผนที่' : 'ยังไม่เปิด';
+      return unlocked;
+    }
+
+    function renderStageScene() {
+      const scene = document.getElementById('scene-stage');
+      scene.style.backgroundImage = `url("${activeStage.image}")`;
+      scene.setAttribute('aria-label', `ฉากจำลอง${activeStage.title}`);
+      scene.replaceChildren();
+      const atmosphere = document.createElement('div');
+      atmosphere.className = `scene-atmosphere atmosphere-${currentStageId}`;
+      atmosphere.setAttribute('aria-hidden', 'true');
+      atmosphere.innerHTML = '<div class="leaf-light"></div><div class="water-shimmer"></div><div class="fire-glow"></div>';
+      scene.appendChild(atmosphere);
+      activeStage.lifeLayers.forEach((className) => {
+        const livingLayer = document.createElement('div');
+        livingLayer.className = `living-cutout ${className}`;
+        livingLayer.style.backgroundImage = `url("${activeStage.image}")`;
+        livingLayer.setAttribute('aria-hidden', 'true');
+        scene.appendChild(livingLayer);
+      });
+      activeStage.targets.forEach((target) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `hotspot ${target.css}`;
+        if (target.type === 'evidence') {
+          const evidence = evidenceDataForStage[target.key];
+          button.dataset.evidence = target.key;
+          button.setAttribute('aria-label', `ตรวจสอบ${evidence.title}`);
+          button.innerHTML = '<span aria-hidden="true">⌕</span>';
+          button.addEventListener('click', () => openEvidence(target.key));
+        } else {
+          button.dataset.decoy = '';
+          button.setAttribute('aria-label', `ตรวจสอบ${target.label}`);
+          button.addEventListener('click', () => showNotice('สิ่งนี้ยังไม่ใช่หลักฐานที่เรากำลังตามหา ลองสังเกตสิ่งของในฉากหรือถามไกด์เพื่อขอคำใบ้นะ'));
+        }
+        scene.appendChild(button);
+      });
+    }
+
+    function activateStage(stageId, recordAsActive = true) {
+      if (!isStageUnlocked(stageId)) {
+        showNotice('ทำด่านก่อนหน้าให้ครบก่อน แล้วด่านนี้จะเปิดให้เล่น');
+        return false;
+      }
+      currentStageId = stageId;
+      activeStage = stages[stageId];
+      if (currentUser && recordAsActive) localStorage.setItem(activeStageStorageKey(currentUser), stageId);
+      evidenceDataForStage = activeStage.evidenceData;
+      questionPoolForStage = activeStage.questionPool;
+      sessionStorage.setItem('naksueb.currentStage', stageId);
+      document.getElementById('era-title').textContent = `ด่าน ${stageOrder.indexOf(stageId) + 1} · ${activeStage.title}`;
+      document.getElementById('era-subtitle').textContent = activeStage.subtitle;
+      document.getElementById('guide-message').textContent = activeStage.intro;
+      document.getElementById('scene-caveat').textContent = activeStage.caveat;
+      const chatLog = document.getElementById('guide-chat-log');
+      chatLog.replaceChildren();
+      const greeting = document.createElement('div');
+      greeting.className = 'chat-message';
+      greeting.textContent = activeStage.greeting || 'สวัสดี! ลองสังเกตหลักฐานในฉากแล้วถามคำใบ้ฉันได้เลย';
+      chatLog.appendChild(greeting);
+      const guideQuestions = activeStage.guideQuestions || [['มีคำใบ้อะไรบ้าง','ขอคำใบ้'],['หลักฐานในฉากคืออะไร','หลักฐานในฉาก'],['ยุคนี้มีอะไรเด่น','ยุคนี้มีอะไรเด่น']];
+      document.querySelectorAll('[data-guide-question]').forEach((button, index) => {
+        button.dataset.guideQuestion = guideQuestions[index][0];
+        button.textContent = guideQuestions[index][1];
+      });
+      renderStageScene();
+      loadOldStoneProgress();
+      renderStageUnlocks();
+      return true;
+    }
+
+    let audioContext = null;
+    let masterVolume = null;
+    let audioActive = false;
+    let activeSoundMode = 'jungle-music';
+    let scheduledAudioNodes = [];
+    let soundIntervals = [];
+    let soundTimeouts = [];
+    let soundMuted = localStorage.getItem('naksueb.soundMuted') === 'true';
+    const storedSoundVolumeRaw = localStorage.getItem('naksueb.soundVolume');
+    const storedSoundVolume = storedSoundVolumeRaw === null ? NaN : Number(storedSoundVolumeRaw);
+    const fixedSoundVolume = Number.isFinite(storedSoundVolume) && storedSoundVolume > 0 && storedSoundVolume <= 1 ? storedSoundVolume : 0.28;
+
+    function ensureAudioContext() {
+      if (audioContext) return audioContext;
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return null;
+      try { audioContext = new AudioContextClass(); } catch { return null; }
+      masterVolume = audioContext.createGain();
+      masterVolume.gain.value = soundMuted ? 0 : getEffectiveSoundGain(fixedSoundVolume);
+      const limiter = audioContext.createDynamicsCompressor();
+      limiter.threshold.value = -14;
+      limiter.knee.value = 18;
+      limiter.ratio.value = 8;
+      limiter.attack.value = .004;
+      limiter.release.value = .24;
+      masterVolume.connect(limiter);
+      limiter.connect(audioContext.destination);
+      return audioContext;
+    }
+
+    function getEffectiveSoundGain(volume) {
+      return volume <= 0 ? 0 : Math.pow(volume, 1.22) * 2.7;
+    }
+
+    function stopCurrentSound() {
+      soundIntervals.forEach((timer) => window.clearInterval(timer));
+      soundIntervals = [];
+      soundTimeouts.forEach((timer) => window.clearTimeout(timer));
+      soundTimeouts = [];
+      scheduledAudioNodes.forEach((node) => { try { node.stop(); } catch {} });
+      scheduledAudioNodes = [];
+    }
+
+    function playTone(frequency, duration = .5, wave = 'sine', volume = .025, endFrequency = frequency) {
+      if (!audioContext || !masterVolume) return;
+      const oscillator = audioContext.createOscillator();
+      const envelope = audioContext.createGain();
+      const now = audioContext.currentTime;
+      oscillator.type = wave;
+      oscillator.frequency.setValueAtTime(frequency, now);
+      oscillator.frequency.exponentialRampToValueAtTime(Math.max(1, endFrequency), now + duration);
+      envelope.gain.setValueAtTime(.0001, now);
+      envelope.gain.linearRampToValueAtTime(volume, now + Math.min(.06, duration / 3));
+      envelope.gain.exponentialRampToValueAtTime(.0001, now + duration);
+      oscillator.connect(envelope);
+      envelope.connect(masterVolume);
+      oscillator.onended = () => {
+        try { oscillator.disconnect(); envelope.disconnect(); } catch {}
+        scheduledAudioNodes = scheduledAudioNodes.filter((node) => node !== oscillator);
+      };
+      oscillator.start(now);
+      oscillator.stop(now + duration + .02);
+      scheduledAudioNodes.push(oscillator);
+    }
+
+    let noiseBuffer = null;
+    function getNoiseBuffer() {
+      if (noiseBuffer) return noiseBuffer;
+      const size = audioContext.sampleRate * 3;
+      noiseBuffer = audioContext.createBuffer(1, size, audioContext.sampleRate);
+      const data = noiseBuffer.getChannelData(0);
+      let drift = 0;
+      for (let i = 0; i < size; i++) {
+        drift = (drift + (Math.random() * .18 - .09)) * .985;
+        data[i] = drift * 2.4;
+      }
+      return noiseBuffer;
+    }
+
+    function addNoiseBed(filterType, frequency, volume) {
+      const source = audioContext.createBufferSource();
+      const filter = audioContext.createBiquadFilter();
+      const gain = audioContext.createGain();
+      source.buffer = getNoiseBuffer();
+      source.loop = true;
+      filter.type = filterType;
+      filter.frequency.value = frequency;
+      filter.Q.value = .55;
+      gain.gain.value = volume;
+      source.connect(filter);
+      filter.connect(gain);
+      gain.connect(masterVolume);
+      source.start();
+      scheduledAudioNodes.push(source);
+    }
+
+    function playNoiseTap(centerFrequency = 1800, volume = .012, duration = .11) {
+      const source = audioContext.createBufferSource();
+      const filter = audioContext.createBiquadFilter();
+      const envelope = audioContext.createGain();
+      const now = audioContext.currentTime;
+      source.buffer = getNoiseBuffer();
+      filter.type = 'bandpass';
+      filter.frequency.value = centerFrequency;
+      filter.Q.value = 1.6;
+      envelope.gain.setValueAtTime(volume, now);
+      envelope.gain.exponentialRampToValueAtTime(.0001, now + duration);
+      source.connect(filter);
+      filter.connect(envelope);
+      envelope.connect(masterVolume);
+      source.start(now, Math.random() * 2.4, duration);
+      source.stop(now + duration + .01);
+      source.onended = () => { try { source.disconnect(); filter.disconnect(); envelope.disconnect(); } catch {} scheduledAudioNodes = scheduledAudioNodes.filter((node) => node !== source); };
+      scheduledAudioNodes.push(source);
+    }
+
+    function startJungleMusic() {
+      const melody = [523.25,659.25,783.99,659.25,587.33,783.99,880,783.99,523.25,659.25,987.77,783.99,698.46,587.33,659.25,523.25];
+      let beat = 0;
+      const playBeat = () => {
+        const note = melody[beat % melody.length];
+        playTone(note, .62, 'triangle', .075);
+        if (beat % 4 === 0) playTone(note / 2, 1.1, 'sine', .04);
+        if (beat % 2 === 0) playNoiseTap(950, .012, .08);
+        beat++;
+      };
+      playBeat();
+      soundIntervals.push(window.setInterval(playBeat, 720));
+    }
+
+    function startLevelAmbience(stageId) {
+      const profiles = {
+        oldstone:{wind:600,water:720,bird:6800,texture:2300},
+        middlestone:{wind:850,water:430,bird:8300,texture:3000},
+        neolithic:{wind:740,water:520,bird:6100,texture:2100},
+        bronze:{wind:540,water:900,bird:10400,texture:3500},
+        iron:{wind:480,water:980,bird:9200,texture:4100}
+      };
+      const profile = profiles[stageId] || profiles.oldstone;
+      addNoiseBed('lowpass', profile.wind, .04);
+      addNoiseBed('bandpass', profile.water, stageId === 'middlestone' || stageId === 'neolithic' ? .035 : .02);
+      const bird = () => {
+        const base = 1450 + Math.random() * 700;
+        playTone(base, .24, 'sine', .021, base * 1.6);
+        soundTimeouts.push(window.setTimeout(() => playTone(base * 1.25, .22, 'sine', .015, base * 1.8), 150));
+      };
+      soundIntervals.push(window.setInterval(bird, profile.bird));
+      soundTimeouts.push(window.setTimeout(bird, 1400));
+      if (stageId === 'middlestone' || stageId === 'neolithic') {
+        let insectPhase = false;
+        soundIntervals.push(window.setInterval(() => { insectPhase = !insectPhase; if (insectPhase) playTone(2950, 1.05, 'sine', .007, 3200); }, stageId === 'middlestone' ? 1700 : 2600));
+      }
+      if (stageId === 'oldstone') soundIntervals.push(window.setInterval(() => playNoiseTap(2400 + Math.random() * 900, .014, .13), 2100));
+      if (stageId === 'bronze') soundIntervals.push(window.setInterval(() => { playNoiseTap(1800, .06, .11); playTone(145, .16, 'triangle', .018, 95); }, 2800));
+      if (stageId === 'iron') soundIntervals.push(window.setInterval(() => { playNoiseTap(1300, .045, .12); playTone(110, .12, 'triangle', .022, 70); }, 2200));
+    }
+
+    function setSoundMode(mode) {
+      activeSoundMode = mode;
+      if (!audioActive || !ensureAudioContext()) return;
+      stopCurrentSound();
+      if (audioContext.state === 'suspended') audioContext.resume();
+      if (mode === 'jungle-music') startJungleMusic();
+      if (mode.startsWith('ambience-')) startLevelAmbience(mode.slice('ambience-'.length));
+    }
+
+    function updateSoundToggle() {
+      const toggle = document.getElementById('sound-toggle');
+      const control = document.querySelector('.sound-control');
+      control.classList.toggle('muted', soundMuted);
+      toggle.setAttribute('aria-label', soundMuted ? 'เปิดเสียง' : 'ปิดเสียง');
+      toggle.setAttribute('aria-pressed', String(soundMuted));
+      toggle.title = soundMuted ? 'เปิดเสียง' : 'ปิดเสียง';
+    }
+
+    function toggleSound() {
+      soundMuted = !soundMuted;
+      localStorage.setItem('naksueb.soundMuted', String(soundMuted));
+      if (masterVolume && audioContext) {
+        const gain = soundMuted ? 0 : getEffectiveSoundGain(fixedSoundVolume);
+        masterVolume.gain.setTargetAtTime(gain, audioContext.currentTime, .08);
+      }
+      updateSoundToggle();
+    }
+
+    function beginAudioAfterGesture() {
+      if (audioActive) return;
+      if (!ensureAudioContext()) return;
+      audioActive = true;
+      audioContext.resume();
+      setSoundMode(activeSoundMode);
+    }
+
+    document.addEventListener('pointerdown', beginAudioAfterGesture, { passive: true });
+    document.addEventListener('keydown', beginAudioAfterGesture);
+    document.getElementById('sound-toggle').addEventListener('click', toggleSound);
+    updateSoundToggle();
+
+    function showView(id) {
+      views.forEach((viewId) => document.getElementById(viewId).classList.toggle('hidden', viewId !== id));
+      if (currentUser && id !== 'login-view') sessionStorage.setItem('naksueb.currentView', id);
+      setSoundMode(id === 'oldstone-view' ? `ambience-${currentStageId}` : ['login-view', 'student-view', 'teacher-view'].includes(id) ? 'jungle-music' : 'silent');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function showNotice(message) {
+      const toast = document.getElementById('notice-toast');
+      toast.textContent = message;
+      toast.classList.remove('hidden');
+      window.clearTimeout(showNotice.timer);
+      showNotice.timer = window.setTimeout(() => toast.classList.add('hidden'), 3200);
+    }
+
+    function routeAccount(username) {
+      const account = accounts[username];
+      if (!account) return false;
+      currentUser = username;
+      if (account.role === 'teacher') {
+        document.getElementById('teacher-greeting').textContent = `ยินดีต้อนรับ ${account.name}`;
+        renderTeacherStudents();
+        showView('teacher-view');
+      } else {
+        document.getElementById('student-greeting').textContent = `ยินดีต้อนรับ ${account.name} พร้อมออกเดินทางหรือยัง?`;
+        const requestedStage = sessionStorage.getItem('naksueb.currentStage') || 'oldstone';
+        activateStage(isStageUnlocked(requestedStage) ? requestedStage : 'oldstone', false);
+        loadOldStoneProgress();
+        const savedView = sessionStorage.getItem('naksueb.currentView');
+        showView(savedView === 'oldstone-view' ? 'oldstone-view' : 'student-view');
+        renderStageUnlocks();
+      }
+      return true;
+    }
+
+    function progressStorageKey(user = currentUser, stageId = currentStageId) { return `naksueb:${user}:${stageId}`; }
+    function activeStageStorageKey(user) { return `naksueb:active-stage:${user}`; }
+
+    function readStudentProgress(user, stageId = currentStageId) {
+      const key = progressStorageKey(user, stageId);
+      let saved = localStorage.getItem(key);
+      if (saved === null) {
+        const legacy = sessionStorage.getItem(key);
+        if (legacy !== null) {
+          saved = legacy;
+          localStorage.setItem(key, legacy);
+        }
+      }
+      try {
+        const progress = JSON.parse(saved || '{}');
+        const activityCount = Math.min(5, Number(progress.activityCount) || 0);
+        return { foundEvidence: progress.foundEvidence || [], activityCount, passed: Boolean(progress.passed || activityCount >= 5) };
+      } catch {
+        return { foundEvidence: [], activityCount: 0, passed: false };
+      }
+    }
+
+    function renderTeacherStudents() {
+      const students = Object.entries(accounts).filter(([, account]) => account.role === 'student');
+      const table = document.getElementById('student-list');
+      table.replaceChildren();
+      let started = 0;
+      let completed = 0;
+      students.forEach(([id, account]) => {
+        const progress = stageOrder.map((stageId) => readStudentProgress(id, stageId));
+        const count = progress.reduce((total, item) => total + (item.passed ? 5 : item.activityCount), 0);
+        const hasStarted = progress.some((item) => item.activityCount > 0 || item.foundEvidence.length > 0 || item.passed);
+        const passedIndex = progress.reduce((last, item, index) => item.passed ? index : last, -1);
+        const activeStageId = localStorage.getItem(activeStageStorageKey(id));
+        const activeIndex = stageOrder.indexOf(activeStageId);
+        if (hasStarted || activeIndex >= 0) started++;
+        const fullyCompleted = progress.every((item) => item.passed);
+        if (fullyCompleted) completed++;
+        const row = document.createElement('tr');
+        const cells = [id, account.name, `${Math.round(count / 25 * 100)}% · ${progress.filter((item) => item.passed).length}/5 ด่าน`];
+        cells.forEach((value) => {
+          const cell = document.createElement('td');
+          cell.textContent = value;
+          row.appendChild(cell);
+        });
+        const statusCell = document.createElement('td');
+        statusCell.className = 'student-progress-status';
+        const badge = document.createElement('span');
+        badge.className = 'badge';
+        const activeIsInProgress = activeIndex >= 0 && !progress[activeIndex].passed;
+        let detail = '';
+        if (fullyCompleted) {
+          badge.textContent = 'เรียนจบครบ 5 ด่าน';
+          detail = 'ผ่านถึงด่าน 5 · ' + stages.iron.title;
+        } else if (activeIsInProgress) {
+          badge.textContent = 'กำลังเรียน';
+          detail = `ด่าน ${activeIndex + 1} · ${stages[activeStageId].title}`;
+        } else if (passedIndex >= 0) {
+          badge.textContent = 'ผ่านแล้ว';
+          detail = `ผ่านถึงด่าน ${passedIndex + 1} · ${stages[stageOrder[passedIndex]].title}`;
+        } else if (hasStarted) {
+          const firstStartedIndex = progress.findIndex((item) => item.activityCount > 0 || item.foundEvidence.length > 0);
+          badge.textContent = 'กำลังเรียน';
+          detail = `ด่าน ${firstStartedIndex + 1} · ${stages[stageOrder[firstStartedIndex]].title}`;
+        } else {
+          badge.textContent = 'ยังไม่เริ่ม';
+        }
+        statusCell.appendChild(badge);
+        if (detail) {
+          const detailLine = document.createElement('small');
+          detailLine.className = 'student-stage-detail';
+          detailLine.textContent = detail;
+          statusCell.appendChild(detailLine);
+        }
+        row.appendChild(statusCell);
+
+        const actionCell = document.createElement('td');
+        const tools = document.createElement('details');
+        tools.className = 'student-progress-tools';
+        const summary = document.createElement('summary');
+        summary.textContent = 'จัดการด่าน';
+        tools.appendChild(summary);
+        const picker = document.createElement('div');
+        picker.className = 'reset-stage-picker';
+        stageOrder.forEach((stageId, index) => {
+          const label = document.createElement('label');
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.value = stageId;
+          checkbox.dataset.resetStage = '';
+          label.append(checkbox, document.createTextNode(`ด่าน ${index + 1} · ${stages[stageId].title}`));
+          picker.appendChild(label);
+        });
+        const resetSelected = document.createElement('button');
+        resetSelected.type = 'button';
+        resetSelected.className = 'light-button reset-progress-button';
+        resetSelected.dataset.resetSelected = '';
+        resetSelected.dataset.resetStudent = id;
+        resetSelected.textContent = 'รีเซ็ตด่านที่เลือก';
+        const resetAll = document.createElement('button');
+        resetAll.type = 'button';
+        resetAll.className = 'light-button reset-progress-button reset-all-button';
+        resetAll.dataset.resetAll = '';
+        resetAll.dataset.resetStudent = id;
+        resetAll.textContent = 'รีเซ็ตทุกด่าน';
+        picker.append(resetSelected, resetAll);
+        tools.appendChild(picker);
+        actionCell.appendChild(tools);
+        row.appendChild(actionCell);
+        table.appendChild(row);
+      });
+      document.getElementById('student-count').textContent = String(students.length);
+      document.getElementById('started-count').textContent = String(started);
+      document.getElementById('completed-count').textContent = String(completed);
+    }
+
+    function loadOldStoneProgress() {
+      const saved = readStudentProgress(currentUser, currentStageId);
+      foundEvidence = new Set(saved.foundEvidence);
+      activityCount = saved.activityCount;
+      stagePassed = saved.passed;
+      renderGameProgress();
+    }
+
+    function saveOldStoneProgress() {
+      localStorage.setItem(progressStorageKey(), JSON.stringify({ foundEvidence: [...foundEvidence], activityCount, passed: stagePassed }));
+    }
+
+    function renderGameProgress() {
+      document.getElementById('evidence-count').textContent = `${foundEvidence.size}/${Object.keys(evidenceDataForStage).length}`;
+      document.getElementById('activity-progress-label').textContent = `กิจกรรม ${activityCount}/5`;
+      document.querySelectorAll('#activity-dots .progress-dot').forEach((dot, index) => dot.classList.toggle('done', index < activityCount));
+      const journal = document.getElementById('evidence-list');
+      journal.replaceChildren();
+      const found = Object.entries(evidenceDataForStage).filter(([key]) => foundEvidence.has(key));
+      if (!found.length) {
+        const empty = document.createElement('p');
+        empty.className = 'empty-journal';
+        empty.textContent = 'สิ่งของที่ค้นพบจะมีภาพเก็บไว้ตรงนี้ ลองถามไกด์หรือสังเกตฉากก่อน';
+        journal.appendChild(empty);
+      } else {
+        found.forEach(([key, evidence]) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'evidence-entry';
+          const thumb = document.createElement('span');
+          thumb.className = `evidence-thumb thumb-${key}`;
+          thumb.setAttribute('aria-hidden', 'true');
+          thumb.style.backgroundImage = `url("${activeStage.image}")`;
+          if (evidence.thumbPosition) thumb.style.backgroundPosition = evidence.thumbPosition;
+          if (evidence.thumbSize) thumb.style.backgroundSize = evidence.thumbSize;
+          const label = document.createElement('span');
+          label.innerHTML = `<strong>✓ ${evidence.title}</strong><small>แตะเพื่ออ่านรายละเอียด</small>`;
+          button.append(thumb, label);
+          button.addEventListener('click', () => openEvidence(key));
+          journal.appendChild(button);
+        });
+      }
+      document.querySelectorAll('.hotspot[data-evidence]').forEach((button) => button.classList.toggle('found', foundEvidence.has(button.dataset.evidence)));
+      const startButton = document.getElementById('launch-activity');
+      if (activityCount >= 5) {
+        startButton.textContent = 'เล่นกิจกรรมอีกครั้ง';
+        startButton.disabled = false;
+      } else {
+        startButton.textContent = 'ทำกิจกรรม';
+        startButton.disabled = false;
+      }
+      const shortcut = document.getElementById('next-stage-shortcut');
+      const nextStageId = stageOrder[stageOrder.indexOf(currentStageId) + 1];
+      const historyJump = currentStageId === 'iron' && stagePassed && isPrehistoryComplete();
+      const hasNextStage = Boolean((nextStageId && stagePassed && isStageUnlocked(nextStageId)) || historyJump);
+      shortcut.classList.toggle('hidden', !hasNextStage);
+      shortcut.dataset.destination = historyJump ? 'history' : nextStageId || '';
+      shortcut.textContent = historyJump ? 'ไปยังสมัยประวัติศาสตร์ →' : hasNextStage ? `ไปด่าน ${stageOrder.indexOf(nextStageId) + 1} · ${stages[nextStageId].title} →` : '';
+    }
+
+    function openEvidence(key) {
+      const item = evidenceDataForStage[key];
+      if (!item) return;
+      foundEvidence.add(key);
+      saveOldStoneProgress();
+      renderGameProgress();
+      const content = document.getElementById('evidence-dialog-content');
+      content.innerHTML = `<h2>${item.title}</h2><div class="evidence-large-thumb large-${key}" role="img" aria-label="ภาพจำลอง ${item.title}"></div><p>${item.text}</p><div class="evidence-meta"><strong>หลักฐานนี้ช่วยให้เข้าใจ:</strong> ${item.tells}<br><br><strong>สิ่งที่ยังสรุปไม่ได้:</strong> ${item.limit}</div><p><a class="source-link" href="${activeStage.sourceUrl}" target="_blank" rel="noreferrer">${item.source} ↗</a></p>`;
+      const largeImage = content.querySelector('.evidence-large-thumb');
+      largeImage.style.backgroundImage = `url("${activeStage.image}")`;
+      if (item.largePosition) largeImage.style.backgroundPosition = item.largePosition;
+      if (item.largeSize) largeImage.style.backgroundSize = item.largeSize;
+      document.getElementById('evidence-dialog').showModal();
+    }
+
+    function chooseQuestion() {
+      return questionPoolForStage[Math.floor(Math.random() * questionPoolForStage.length)];
+    }
+
+    function openActivity() {
+      if (foundEvidence.size < Object.keys(evidenceDataForStage).length) {
+        document.getElementById('evidence-required-message').textContent = `ตอนนี้พบหลักฐานแล้ว ${foundEvidence.size} จาก ${Object.keys(evidenceDataForStage).length} ชิ้น ลองสำรวจให้ครบก่อน แล้วค่อยกลับมาทำกิจกรรมนะ`;
+        document.getElementById('evidence-required-dialog').showModal();
+        return;
+      }
+      if (activityCount >= 5) {
+        activityCount = 0;
+        saveOldStoneProgress();
+        renderGameProgress();
+      }
+      currentQuestion = chooseQuestion();
+      document.getElementById('question-type').textContent = currentQuestion.type;
+      document.getElementById('question-text').textContent = currentQuestion.text;
+      document.getElementById('answer-feedback').textContent = '';
+      document.getElementById('next-question').classList.remove('show');
+      const answerList = document.getElementById('answer-list');
+      answerList.replaceChildren();
+      currentQuestion.options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'answer-option';
+        button.textContent = option;
+        button.addEventListener('click', () => answerQuestion(button, index));
+        answerList.appendChild(button);
+      });
+      document.getElementById('activity-dialog').showModal();
+    }
+
+    function answerQuestion(selected, index) {
+      const feedback = document.getElementById('answer-feedback');
+      if (index !== currentQuestion.answer) {
+        feedback.textContent = `ยังไม่ใช่ ลองอีกครั้งนะ คำใบ้: ${currentQuestion.hint}`;
+        feedback.style.color = '#8a3d28';
+        return;
+      }
+      document.querySelectorAll('.answer-option').forEach((button) => { button.disabled = true; });
+      activityCount = Math.min(5, activityCount + 1);
+      if (activityCount >= 5) stagePassed = true;
+      saveOldStoneProgress();
+      renderGameProgress();
+      feedback.textContent = `ถูกต้อง! ${currentQuestion.explain}`;
+      feedback.style.color = '#3f6c3a';
+      const nextButton = document.getElementById('next-question');
+      nextButton.textContent = activityCount >= 5 ? 'จบกิจกรรม' : 'ข้อต่อไป';
+      nextButton.classList.add('show');
+    }
+
+    function guideReply(question) {
+      const q = question.toLowerCase();
+      if (currentStageId === 'neolithic') {
+        if (/คำใบ้|ใบ้|หาอะไร|ควรหา|สิ่งของ/.test(q)) return 'คำใบ้: มองหาขวานที่ผิวเรียบจากการขัด ภาชนะดินเผา และแท่นหินที่ใช้ลับเครื่องมือ';
+        if (/ขวาน|เครื่องมือ|หิน/.test(q)) return 'ขวานหินขัดเป็นหลักฐานเด่นของยุคหินใหม่ ข้อมูลกรมศิลปากรยังกล่าวถึงแท่นหินลับและภาชนะดินเผา';
+        if (/ภาชนะ|หม้อ|ดินเผา/.test(q)) return 'ภาชนะดินเผาใช้บรรจุหรือปรุงอาหารได้ แต่รูปทรงในภาพเป็นภาพประกอบ ไม่ใช่ของจากแหล่งขุดค้นจริง';
+        return 'ฉันช่วยใบ้เรื่องขวานหินขัด ภาชนะดินเผา และแท่นหินลับได้นะ';
+      }
+      if (currentStageId === 'bronze') {
+        if (/คำใบ้|ใบ้|หาอะไร|ควรหา|สิ่งของ/.test(q)) return 'คำใบ้: ลองหาเบ้าหลอมหรือแม่พิมพ์ ขวานสำริด และกำไลสำริด';
+        if (/สำริด|โลหะ|ทองแดง|ดีบุก/.test(q)) return 'สำริดเป็นโลหะผสมที่มีทองแดงกับดีบุกเป็นส่วนสำคัญ และมีหลักฐานการทำเป็นเครื่องมือกับเครื่องประดับ';
+        if (/หล่อ|เบ้า|แม่พิมพ์/.test(q)) return 'เบ้าหลอมและแม่พิมพ์ช่วยให้เราเรียนรู้การให้ความร้อนและขึ้นรูปโลหะ';
+        return 'ฉันช่วยใบ้เรื่องสำริด การหล่อ ขวาน หรือกำไลได้นะ';
+      }
+      if (currentStageId === 'iron') {
+        if (/คำใบ้|ใบ้|หาอะไร|ควรหา|สิ่งของ/.test(q)) return 'คำใบ้: มองหาขวานเหล็ก ใบหอกเหล็ก และเตาถลุงเหล็ก';
+        if (/เหล็ก|เครื่องมือ/.test(q)) return 'กรมศิลปากรยกขวานเหล็กและใบหอกเหล็กเป็นตัวอย่างวัตถุสมัยเหล็ก ส่วนเตาช่วยเล่าถึงการถลุงโลหะ';
+        if (/หอก|ใบหอก/.test(q)) return 'ใบหอกเหล็กเป็นหนึ่งในหลักฐานเครื่องมือเหล็ก ลองสังเกตชิ้นยาวปลายแหลมบนโต๊ะ';
+        return 'ฉันช่วยใบ้เรื่องขวาน ใบหอก และกำไลเหล็กได้นะ';
+      }
+      if (currentStageId === 'middlestone') {
+        if (/คำใบ้|ใบ้|หาอะไร|ควรหา|สิ่งของ/.test(q)) {
+          return 'คำใบ้: ลองมองหาก้อนหินที่ถูกกะเทาะให้เป็นรูปทรง และเศษหินที่อยู่ใกล้กัน เศษเหล่านั้นอาจช่วยบอกวิธีทำเครื่องมือได้';
+        }
+        if (/หัวบิเนียน|เครื่องมือ|หิน|ขูด|เจาะ/.test(q)) {
+          return 'ยุคหินกลางมีการเลือกชนิดหินและกะเทาะให้ละเอียดขึ้น เครื่องมือบางรูปทรงอาจเหมาะกับงานอย่างขูดหรือเจาะ แต่เราไม่ควรฟันธงหน้าที่ของวัตถุจากภาพอย่างเดียว';
+        }
+        if (/ยุคหินกลาง|หินกลาง/.test(q)) {
+          return 'กรมศิลปากรอธิบายว่ายุคหินกลางมีการพัฒนาเทคนิคกะเทาะและเลือกหินให้เหมาะกับงานมากขึ้น ตัวอย่างเครื่องมือเรียกว่าเครื่องมือหินแบบหัวบิเนียน';
+        }
+        return 'ฉันยังไม่มีข้อมูลพอจะตอบเรื่องนั้น ลองถามเรื่องคำใบ้ เครื่องมือหินแบบหัวบิเนียน หรือยุคหินกลางนะ';
+      }
+      if (/คำใบ้|ใบ้|หาอะไร|ควรหา|สิ่งของ/.test(q)) {
+        return 'คำใบ้: มองหาที่กำบังซึ่งคนอาจใช้พักอาศัย และก้อนหินที่มีรอยกะเทาะเป็นคม ลองแตะบริเวณเพิงผา ก้อนหิน และสะเก็ดหินในฉากได้เลย';
+      }
+      if (/สับ|ตัด|เครื่องมือ|หิน/.test(q)) {
+        return 'เครื่องมือหินกะเทาะบางชนิดมีคม ใช้สับ ตัด หรือขูดได้ แต่หน้าที่ของแต่ละชิ้นอาจต่างกัน ลองดูรูปร่างและรอยกะเทาะประกอบนะ';
+      }
+      if (/เพิง|ถ้ำ|ที่อยู่|พัก/.test(q)) {
+        return 'เพิงผาหรือบริเวณใกล้ถ้ำเป็นหลักฐานให้ศึกษาว่าผู้คนใช้พื้นที่อย่างไร แต่เราไม่ควรสรุปว่าคนทุกกลุ่มอาศัยอยู่ในถ้ำ';
+      }
+      if (/ยุคหินเก่า|หินเก่า/.test(q)) {
+        return 'ยุคหินเก่าเป็นช่วงก่อนประวัติศาสตร์ที่มีหลักฐานการใช้เครื่องมือหินกะเทาะ ข้อมูลในเกมยกตัวอย่างแหล่งโบราณคดีและเครื่องมือเพื่อให้เราฝึกสังเกตหลักฐาน';
+      }
+      return 'ฉันยังไม่มีข้อมูลพอจะตอบเรื่องนั้น ลองถามฉันเรื่องคำใบ้ เครื่องมือหิน เพิงผา หรือยุคหินเก่านะ';
+    }
+
+    function sendGuideMessage(question) {
+      const text = question.trim();
+      if (!text) return;
+      const log = document.getElementById('guide-chat-log');
+      const userMessage = document.createElement('div');
+      userMessage.className = 'chat-message user';
+      userMessage.textContent = text;
+      const reply = document.createElement('div');
+      reply.className = 'chat-message';
+      reply.textContent = guideReply(text);
+      log.append(userMessage, reply);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    togglePassword.addEventListener('click', () => {
+      const reveal = password.type === 'password';
+      password.type = reveal ? 'text' : 'password';
+      togglePassword.setAttribute('aria-label', reveal ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน');
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const account = accounts[username];
+      if (!account || account.password !== password.value) {
+        status.textContent = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง ลองตรวจสอบแล้วกรอกใหม่';
+        document.getElementById('username').focus();
+        return;
+      }
+      status.textContent = '';
+      sessionStorage.setItem('naksueb.currentUser', username);
+      routeAccount(username);
+    });
+
+    document.querySelectorAll('.logout-button').forEach((button) => button.addEventListener('click', () => {
+      form.reset();
+      status.textContent = '';
+      sessionStorage.removeItem('naksueb.currentUser');
+      sessionStorage.removeItem('naksueb.currentView');
+      currentUser = '';
+      showView('login-view');
+      document.getElementById('username').focus();
+    }));
+
+    document.getElementById('student-list').addEventListener('click', (event) => {
+      const action = event.target.closest('[data-reset-selected], [data-reset-all]');
+      if (!action) return;
+      const studentId = action.dataset.resetStudent;
+      const student = accounts[studentId];
+      if (!student || student.role !== 'student') return;
+      const resetAll = action.hasAttribute('data-reset-all');
+      const row = action.closest('tr');
+      const selectedStages = resetAll ? [...stageOrder] : [...row.querySelectorAll('[data-reset-stage]:checked')].map((input) => input.value);
+      if (!selectedStages.length) {
+        showNotice('เลือกด่านที่ต้องการรีเซ็ตก่อนนะ');
+        return;
+      }
+      const stageNames = selectedStages.map((stageId) => stages[stageId].title).join('、');
+      const prompt = resetAll
+        ? `รีเซ็ตความคืบหน้าทุกด่านของ ${student.name} ใช่ไหม?`
+        : `รีเซ็ต ${stageNames} ของ ${student.name} ใช่ไหม?`;
+      if (!window.confirm(prompt)) return;
+      selectedStages.forEach((stageId) => {
+        localStorage.setItem(progressStorageKey(studentId, stageId), JSON.stringify({ foundEvidence: [], activityCount: 0, passed: false }));
+        sessionStorage.removeItem(progressStorageKey(studentId, stageId));
+      });
+      if (resetAll) localStorage.removeItem(activeStageStorageKey(studentId));
+      renderTeacherStudents();
+      if (currentUser === studentId) loadOldStoneProgress();
+      showNotice(resetAll ? `รีเซ็ตทุกด่านของ ${student.name} แล้ว` : `รีเซ็ต ${stageNames} ของ ${student.name} แล้ว`);
+    });
+
+    window.addEventListener('storage', (event) => {
+      if (!event.key || !event.key.startsWith('naksueb:')) return;
+      const isProgressKey = new RegExp(':(' + stageOrder.join('|') + ')$').test(event.key);
+      const isActiveStageKey = event.key.startsWith('naksueb:active-stage:');
+      if (!isProgressKey && !isActiveStageKey) return;
+      if (isProgressKey && event.key === progressStorageKey(currentUser) && !document.getElementById('oldstone-view').classList.contains('hidden')) loadOldStoneProgress();
+      if (!document.getElementById('teacher-view').classList.contains('hidden')) renderTeacherStudents();
+    });
+
+    const rememberedUser = sessionStorage.getItem('naksueb.currentUser');
+    if (rememberedUser && !routeAccount(rememberedUser)) {
+      sessionStorage.removeItem('naksueb.currentUser');
+    }
+
+    document.getElementById('open-prehistory').addEventListener('click', () => {
+      renderStageUnlocks();
+      document.getElementById('stage-board').classList.add('open');
+      document.getElementById('stage-board').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+
+    document.getElementById('open-history').addEventListener('click', () => {
+      if (!renderHistoricalMapUnlock()) return;
+      document.getElementById('stage-board').classList.remove('open');
+      document.getElementById('history-board').classList.add('open');
+      document.getElementById('history-board').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    document.getElementById('back-from-history').addEventListener('click', () => {
+      document.getElementById('history-board').classList.remove('open');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    document.getElementById('stage-list').addEventListener('click', (event) => {
+      const tile = event.target.closest('[data-stage-select]');
+      if (!tile || tile.disabled) return;
+      if (activateStage(tile.dataset.stageSelect)) showView('oldstone-view');
+    });
+
+    document.getElementById('next-stage-shortcut').addEventListener('click', () => {
+      if (currentStageId === 'iron' && isPrehistoryComplete()) {
+        renderHistoricalMapUnlock();
+        document.getElementById('stage-board').classList.remove('open');
+        document.getElementById('history-board').classList.add('open');
+        showView('student-view');
+        document.getElementById('history-board').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      const nextStageId = stageOrder[stageOrder.indexOf(currentStageId) + 1];
+      if (nextStageId && activateStage(nextStageId)) showView('oldstone-view');
+    });
+
+    document.getElementById('back-to-map').addEventListener('click', () => {
+      renderStageUnlocks();
+      showView('student-view');
+    });
+    document.getElementById('launch-activity').addEventListener('click', openActivity);
+    document.getElementById('talk-to-guide').addEventListener('click', () => document.getElementById('guide-dialog').showModal());
+    document.getElementById('guide-chat-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const input = document.getElementById('guide-chat-input');
+      sendGuideMessage(input.value);
+      input.value = '';
+      input.focus();
+    });
+    document.querySelectorAll('[data-guide-question]').forEach((button) => button.addEventListener('click', () => sendGuideMessage(button.dataset.guideQuestion)));
+    document.querySelector('.scene-stage').addEventListener('click', (event) => {
+      if (!event.target.closest('.hotspot')) showNotice('ยังไม่พบหลักฐานตรงนี้ ลองถามไกด์หรือสังเกตสิ่งของและร่องรอยในฉากอีกครั้ง');
+    });
+    document.querySelectorAll('.dialog-close').forEach((button) => button.addEventListener('click', () => button.closest('dialog').close()));
+    document.getElementById('next-question').addEventListener('click', () => {
+      const dialog = document.getElementById('activity-dialog');
+      if (activityCount >= 5) {
+        dialog.close();
+        renderStageUnlocks();
+        const nextStageId = stageOrder[stageOrder.indexOf(currentStageId) + 1];
+        showNotice(nextStageId ? `เก่งมาก! ผ่านด่าน${activeStage.title}แล้ว ปลดล็อก${stages[nextStageId].title}แล้ว` : 'ยอดเยี่ยม! ผ่านครบทั้งห้าด่านแล้ว ไปยังสมัยประวัติศาสตร์ได้เลย');
+      } else {
+        dialog.close();
+        openActivity();
+      }
+    });
+    document.getElementById('review-evidence').addEventListener('click', () => {
+      document.getElementById('activity-dialog').close();
+      showNotice('กลับไปคุยกับไกด์หรือแตะสมุดหลักฐานเพื่อทบทวน แล้วค่อยลองใหม่');
+    });
+    document.getElementById('return-to-scene').addEventListener('click', () => document.getElementById('evidence-required-dialog').close());
+
+    document.getElementById('add-student-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const idField = document.getElementById('new-student-id');
+      const nameField = document.getElementById('new-student-name');
+      const passwordField = document.getElementById('new-student-password');
+      const id = idField.value.trim();
+      if (accounts[id]) {
+        idField.setCustomValidity('รหัสนี้มีอยู่แล้ว');
+        idField.reportValidity();
+        idField.addEventListener('input', () => idField.setCustomValidity(''), { once: true });
+        return;
+      }
+      accounts[id] = { password: passwordField.value, role: 'student', name: nameField.value.trim() };
+      renderTeacherStudents();
+      event.target.reset();
+      showNotice('เพิ่มบัญชีตัวอย่างสำหรับรอบนี้แล้ว');
+    });
+  </script>
+</body>
+</html>
