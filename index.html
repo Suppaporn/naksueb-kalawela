@@ -242,6 +242,8 @@
     .guide-panel p { margin:8px 0 16px; padding:12px; border:1px solid #e2d0ad; border-radius:14px; color:#655541; background:#f7efdf; box-shadow:0 3px 9px rgba(80,52,22,.08); font-size:14px; line-height:1.65; }
     .talk-button { margin-top:auto; min-height:44px; border:1px solid #d3a851; border-radius:12px; padding:8px 12px; color:#fff9e9; background:linear-gradient(#bd782d,#98551e); font:inherit; font-weight:800; cursor:pointer; }
     .scene-stage { position:relative; height:clamp(440px,calc(100vh - 240px),650px); min-height:0; overflow:hidden; border:3px solid #e4c77f; border-radius:22px; background:#426044 url("old-stone-scene.png") center/cover no-repeat; box-shadow:0 16px 35px rgba(12,31,25,.38); }
+    .scene-video { position:absolute; inset:0; z-index:0; width:100%; height:100%; object-fit:cover; object-position:center; pointer-events:none; }
+    .scene-video.video-failed { display:none; }
     .scene-stage::after { content:"ภาพจำลองเพื่อการเรียนรู้จากหลักฐานทางโบราณคดี"; position:absolute; right:12px; bottom:9px; z-index:3; padding:5px 9px; border-radius:8px; color:#fff7e5; background:rgba(20,40,28,.76); font-size:11px; }
     .hotspot { position:absolute; z-index:2; width:12%; height:18%; display:block; padding:0; border:2px solid transparent; border-radius:18px; color:transparent; background:transparent; box-shadow:none; font-size:25px; cursor:pointer; animation:none; }
     .hotspot span { opacity:0; }
@@ -809,11 +811,11 @@ const ironQuestions=makeQuestions([
 ]);
 
 const stages = {
- oldstone:{id:'oldstone',title:'ยุคหินเก่า',image:'old-stone-scene.png',evidenceData,questionPool,sourceUrl:'https://www.finearts.go.th/fad4/view/45282-',subtitle:'สังเกตเครื่องมือหินกะเทาะและร่องรอยจากอดีต',caveat:'ฉากนี้เป็นภาพจำลองจากหลักฐานหลายแหล่ง ไม่ใช่ภาพหรือแผนที่ของแหล่งโบราณคดีแห่งใดแห่งหนึ่ง',targets:[{key:'shelter',css:'hotspot-shelter',type:'evidence'},{key:'chopper',css:'hotspot-chopper',type:'evidence'},{key:'flake',css:'hotspot-flakes',type:'evidence'},{css:'decoy-girl',type:'decoy',label:'เด็กผู้หญิงในฉาก'},{css:'decoy-deer',type:'decoy',label:'กวางในฉาก'},{css:'decoy-ground-deer',type:'decoy',label:'กวางที่นอนอยู่บนพื้นในฉาก'},{css:'decoy-standing-person',type:'decoy',label:'ผู้ชายที่ยืนหันหลังในฉาก'}],lifeLayers:['living-person-old','living-deer-old'],intro:'ลองสังเกตสิ่งของในฉากก่อนนะ ถ้ายังไม่แน่ใจ กดคุยกับฉันเพื่อขอคำใบ้ได้',greeting:'สวัสดี! ลองสังเกตเพิงผาและก้อนหินที่มีรอยกะเทาะนะ ถ้าอยากได้คำใบ้ถามฉันได้',guideQuestions:[['มีคำใบ้อะไรบ้าง','ขอคำใบ้'],['เครื่องมือหินใช้ทำอะไร','เครื่องมือหินใช้ทำอะไร'],['ยุคหินเก่าคืออะไร','ยุคหินเก่า']]},
- middlestone:{id:'middlestone',title:'ยุคหินกลาง',image:'middle-stone-scene.png',evidenceData:middleStoneEvidenceData,questionPool:middleStoneQuestionPool,sourceUrl:'https://www.finearts.go.th/fad4/view/45282-',subtitle:'สังเกตการเลือกหินและเทคนิคกะเทาะที่ละเอียดขึ้น',caveat:'ภาพนี้เป็นฉากจำลองเพื่อการเรียนรู้ ไม่ใช่ภาพจำลองแหล่งโบราณคดีเฉพาะแห่ง',targets:[{key:'core',css:'middle-core',type:'evidence'},{key:'scraper',css:'middle-scraper',type:'evidence'},{key:'middleflake',css:'middle-flake',type:'evidence'},{css:'middle-decoy-gatherer',type:'decoy',label:'คนกำลังเก็บผลไม้'},{css:'middle-decoy-toolmaker',type:'decoy',label:'คนกำลังทำเครื่องมือ'},{css:'middle-decoy-stream',type:'decoy',label:'คนที่อยู่ริมลำธาร'}],lifeLayers:['living-person-middle','living-person-middle-two'],intro:'มองหาหินที่ถูกกะเทาะเป็นรูปทรง และเศษหินรอบ ๆ นะ ถ้าต้องการคำใบ้ถามฉันได้',greeting:'สวัสดี! ฉากนี้เป็นยุคหินกลาง ลองสังเกตเครื่องมือหินที่ถูกกะเทาะและสะเก็ดหินรอบ ๆ นะ',guideQuestions:[['มีคำใบ้อะไรบ้าง','ขอคำใบ้'],['เครื่องมือหัวบิเนียนคืออะไร','เครื่องมือหัวบิเนียน'],['ยุคหินกลางต่างอย่างไร','ยุคหินกลางต่างอย่างไร']]},
- neolithic:{id:'neolithic',title:'ยุคหินใหม่',image:'neolithic-scene.png',evidenceData:neolithicEvidence,questionPool:neolithicQuestions,sourceUrl:'https://finearts.go.th/storage/contents/2023/06/file/7jzLHhzb8cRR94Q9L9c03o58exlNqMqebUkiRJVy.pdf',subtitle:'สังเกตเครื่องมือหินขัดและสิ่งของในชุมชน',caveat:'ฉากนี้เป็นภาพประกอบเพื่อการเรียนรู้ ไม่ใช่การจำลองแหล่งโบราณคดีแห่งใดโดยเฉพาะ',targets:[{key:'polishedAxe',css:'neo-axe',type:'evidence'},{key:'pottery',css:'neo-pot',type:'evidence'},{key:'farmingArea',css:'neo-crop',type:'evidence'},{css:'neo-decoy',type:'decoy',label:'คนกำลังทำงานในฉาก'}],lifeLayers:['living-neolithic'],intro:'ลองมองหาขวานหินขัด ภาชนะ และแท่นหินในฉากนะ ถ้ายังไม่แน่ใจถามคำใบ้ฉันได้',greeting:'สวัสดี! ลองสังเกตเครื่องมือหินขัดกับภาชนะในชุมชนนี้นะ',guideQuestions:[['มีคำใบ้อะไรบ้าง','ขอคำใบ้'],['ขวานหินขัดต่างจากหินกะเทาะไหม','ขวานหินขัด'],['คนใช้ภาชนะทำอะไร','ภาชนะดินเผา']]},
- bronze:{id:'bronze',title:'ยุคสำริด',image:'bronze-scene.png',evidenceData:bronzeEvidence,questionPool:bronzeQuestions,sourceUrl:'https://www.finearts.go.th/fad4/view/45282-',subtitle:'ตามรอยการหล่อและการใช้เครื่องมือสำริด',caveat:'ภาพนี้เป็นฉากจำลองเพื่อการเรียนรู้ ไม่ใช่ภาพของแหล่งโบราณคดีเฉพาะแห่ง',targets:[{key:'castingMould',css:'bronze-mold',type:'evidence'},{key:'bronzeAxe',css:'bronze-axe',type:'evidence'},{key:'bronzeBangle',css:'bronze-bangle',type:'evidence'},{css:'bronze-decoy',type:'decoy',label:'ช่างกำลังทำงาน'}],lifeLayers:['living-bronze'],intro:'ลองหาแม่พิมพ์หรือเบ้าหลอม ขวานสำริด และกำไลนะ ถ้าติดขัดถามคำใบ้ฉันได้',greeting:'สวัสดี! ฉากนี้มีร่องรอยการทำงานกับโลหะ ลองมองหาเครื่องมือและเครื่องประดับสำริดนะ',guideQuestions:[['มีคำใบ้อะไรบ้าง','ขอคำใบ้'],['สำริดทำจากอะไร','สำริดคืออะไร'],['หลักฐานการหล่อมีอะไร','การหล่อสำริด']]},
- iron:{id:'iron',title:'ยุคเหล็ก',image:'iron-scene.png',evidenceData:ironEvidence,questionPool:ironQuestions,sourceUrl:'https://www.finearts.go.th/fad4/view/45282-',subtitle:'สังเกตหลักฐานการถลุงและเครื่องมือเหล็ก',caveat:'ภาพนี้เป็นฉากจำลองเพื่อการเรียนรู้ ไม่ใช่ภาพของแหล่งโบราณคดีเฉพาะแห่ง',targets:[{key:'ironAxe',css:'iron-axe',type:'evidence'},{key:'spearhead',css:'iron-spear',type:'evidence'},{key:'ironBracelet',css:'iron-bloom',type:'evidence'},{css:'iron-decoy',type:'decoy',label:'คนที่กำลังสังเกตเตาหลอม'}],lifeLayers:['living-iron'],intro:'ลองหาขวานเหล็ก ใบหอก และเตาถลุงเหล็กในฉาก ถ้าต้องการคำใบ้ถามฉันได้',greeting:'สวัสดี! ฉากนี้ชวนตามรอยการใช้เหล็ก ลองสังเกตเครื่องมือกับเครื่องประดับนะ',guideQuestions:[['มีคำใบ้อะไรบ้าง','ขอคำใบ้'],['เหล็กถูกนำมาทำอะไร','เครื่องมือเหล็ก'],['ใบหอกเป็นหลักฐานอะไร','ใบหอกเหล็ก']]}
+ oldstone:{id:'oldstone',video:'old-stone-scene.mp4',title:'ยุคหินเก่า',image:'old-stone-scene.png',evidenceData,questionPool,sourceUrl:'https://www.finearts.go.th/fad4/view/45282-',subtitle:'สังเกตเครื่องมือหินกะเทาะและร่องรอยจากอดีต',caveat:'ฉากนี้เป็นภาพจำลองจากหลักฐานหลายแหล่ง ไม่ใช่ภาพหรือแผนที่ของแหล่งโบราณคดีแห่งใดแห่งหนึ่ง',targets:[{key:'shelter',css:'hotspot-shelter',type:'evidence'},{key:'chopper',css:'hotspot-chopper',type:'evidence'},{key:'flake',css:'hotspot-flakes',type:'evidence'},{css:'decoy-girl',type:'decoy',label:'เด็กผู้หญิงในฉาก'},{css:'decoy-deer',type:'decoy',label:'กวางในฉาก'},{css:'decoy-ground-deer',type:'decoy',label:'กวางที่นอนอยู่บนพื้นในฉาก'},{css:'decoy-standing-person',type:'decoy',label:'ผู้ชายที่ยืนหันหลังในฉาก'}],lifeLayers:['living-person-old','living-deer-old'],intro:'ลองสังเกตสิ่งของในฉากก่อนนะ ถ้ายังไม่แน่ใจ กดคุยกับฉันเพื่อขอคำใบ้ได้',greeting:'สวัสดี! ลองสังเกตเพิงผาและก้อนหินที่มีรอยกะเทาะนะ ถ้าอยากได้คำใบ้ถามฉันได้',guideQuestions:[['มีคำใบ้อะไรบ้าง','ขอคำใบ้'],['เครื่องมือหินใช้ทำอะไร','เครื่องมือหินใช้ทำอะไร'],['ยุคหินเก่าคืออะไร','ยุคหินเก่า']]},
+ middlestone:{id:'middlestone',video:'middle-stone-scene.mp4',title:'ยุคหินกลาง',image:'middle-stone-scene.png',evidenceData:middleStoneEvidenceData,questionPool:middleStoneQuestionPool,sourceUrl:'https://www.finearts.go.th/fad4/view/45282-',subtitle:'สังเกตการเลือกหินและเทคนิคกะเทาะที่ละเอียดขึ้น',caveat:'ภาพนี้เป็นฉากจำลองเพื่อการเรียนรู้ ไม่ใช่ภาพจำลองแหล่งโบราณคดีเฉพาะแห่ง',targets:[{key:'core',css:'middle-core',type:'evidence'},{key:'scraper',css:'middle-scraper',type:'evidence'},{key:'middleflake',css:'middle-flake',type:'evidence'},{css:'middle-decoy-gatherer',type:'decoy',label:'คนกำลังเก็บผลไม้'},{css:'middle-decoy-toolmaker',type:'decoy',label:'คนกำลังทำเครื่องมือ'},{css:'middle-decoy-stream',type:'decoy',label:'คนที่อยู่ริมลำธาร'}],lifeLayers:['living-person-middle','living-person-middle-two'],intro:'มองหาหินที่ถูกกะเทาะเป็นรูปทรง และเศษหินรอบ ๆ นะ ถ้าต้องการคำใบ้ถามฉันได้',greeting:'สวัสดี! ฉากนี้เป็นยุคหินกลาง ลองสังเกตเครื่องมือหินที่ถูกกะเทาะและสะเก็ดหินรอบ ๆ นะ',guideQuestions:[['มีคำใบ้อะไรบ้าง','ขอคำใบ้'],['เครื่องมือหัวบิเนียนคืออะไร','เครื่องมือหัวบิเนียน'],['ยุคหินกลางต่างอย่างไร','ยุคหินกลางต่างอย่างไร']]},
+ neolithic:{id:'neolithic',video:'neolithic-scene.mp4',title:'ยุคหินใหม่',image:'neolithic-scene.png',evidenceData:neolithicEvidence,questionPool:neolithicQuestions,sourceUrl:'https://finearts.go.th/storage/contents/2023/06/file/7jzLHhzb8cRR94Q9L9c03o58exlNqMqebUkiRJVy.pdf',subtitle:'สังเกตเครื่องมือหินขัดและสิ่งของในชุมชน',caveat:'ฉากนี้เป็นภาพประกอบเพื่อการเรียนรู้ ไม่ใช่การจำลองแหล่งโบราณคดีแห่งใดโดยเฉพาะ',targets:[{key:'polishedAxe',css:'neo-axe',type:'evidence'},{key:'pottery',css:'neo-pot',type:'evidence'},{key:'farmingArea',css:'neo-crop',type:'evidence'},{css:'neo-decoy',type:'decoy',label:'คนกำลังทำงานในฉาก'}],lifeLayers:['living-neolithic'],intro:'ลองมองหาขวานหินขัด ภาชนะ และแท่นหินในฉากนะ ถ้ายังไม่แน่ใจถามคำใบ้ฉันได้',greeting:'สวัสดี! ลองสังเกตเครื่องมือหินขัดกับภาชนะในชุมชนนี้นะ',guideQuestions:[['มีคำใบ้อะไรบ้าง','ขอคำใบ้'],['ขวานหินขัดต่างจากหินกะเทาะไหม','ขวานหินขัด'],['คนใช้ภาชนะทำอะไร','ภาชนะดินเผา']]},
+ bronze:{id:'bronze',video:'bronze-scene.mp4',title:'ยุคสำริด',image:'bronze-scene.png',evidenceData:bronzeEvidence,questionPool:bronzeQuestions,sourceUrl:'https://www.finearts.go.th/fad4/view/45282-',subtitle:'ตามรอยการหล่อและการใช้เครื่องมือสำริด',caveat:'ภาพนี้เป็นฉากจำลองเพื่อการเรียนรู้ ไม่ใช่ภาพของแหล่งโบราณคดีเฉพาะแห่ง',targets:[{key:'castingMould',css:'bronze-mold',type:'evidence'},{key:'bronzeAxe',css:'bronze-axe',type:'evidence'},{key:'bronzeBangle',css:'bronze-bangle',type:'evidence'},{css:'bronze-decoy',type:'decoy',label:'ช่างกำลังทำงาน'}],lifeLayers:['living-bronze'],intro:'ลองหาแม่พิมพ์หรือเบ้าหลอม ขวานสำริด และกำไลนะ ถ้าติดขัดถามคำใบ้ฉันได้',greeting:'สวัสดี! ฉากนี้มีร่องรอยการทำงานกับโลหะ ลองมองหาเครื่องมือและเครื่องประดับสำริดนะ',guideQuestions:[['มีคำใบ้อะไรบ้าง','ขอคำใบ้'],['สำริดทำจากอะไร','สำริดคืออะไร'],['หลักฐานการหล่อมีอะไร','การหล่อสำริด']]},
+ iron:{id:'iron',video:'iron-scene.mp4',title:'ยุคเหล็ก',image:'iron-scene.png',evidenceData:ironEvidence,questionPool:ironQuestions,sourceUrl:'https://www.finearts.go.th/fad4/view/45282-',subtitle:'สังเกตหลักฐานการถลุงและเครื่องมือเหล็ก',caveat:'ภาพนี้เป็นฉากจำลองเพื่อการเรียนรู้ ไม่ใช่ภาพของแหล่งโบราณคดีเฉพาะแห่ง',targets:[{key:'ironAxe',css:'iron-axe',type:'evidence'},{key:'spearhead',css:'iron-spear',type:'evidence'},{key:'ironBracelet',css:'iron-bloom',type:'evidence'},{css:'iron-decoy',type:'decoy',label:'คนที่กำลังสังเกตเตาหลอม'}],lifeLayers:['living-iron'],intro:'ลองหาขวานเหล็ก ใบหอก และเตาถลุงเหล็กในฉาก ถ้าต้องการคำใบ้ถามฉันได้',greeting:'สวัสดี! ฉากนี้ชวนตามรอยการใช้เหล็ก ลองสังเกตเครื่องมือกับเครื่องประดับนะ',guideQuestions:[['มีคำใบ้อะไรบ้าง','ขอคำใบ้'],['เหล็กถูกนำมาทำอะไร','เครื่องมือเหล็ก'],['ใบหอกเป็นหลักฐานอะไร','ใบหอกเหล็ก']]}
 };
 
     let currentStageId = 'oldstone';
@@ -882,12 +884,39 @@ const stages = {
       scene.style.backgroundImage = `url("${activeStage.image}")`;
       scene.setAttribute('aria-label', `ฉากจำลอง${activeStage.title}`);
       scene.replaceChildren();
+      if (activeStage.video) {
+        const video = document.createElement('video');
+        video.className = 'scene-video';
+        video.src = activeStage.video;
+        video.poster = activeStage.image;
+        video.autoplay = true;
+        video.loop = true;
+        video.muted = soundMuted;
+        video.volume = Math.min(1, getEffectiveSoundGain(fixedSoundVolume));
+        video.playsInline = true;
+        video.preload = 'metadata';
+        video.setAttribute('aria-hidden', 'true');
+        video.addEventListener('error', () => {
+          video.classList.add('video-failed');
+          if (activeSoundMode.startsWith('ambience-')) setSoundMode(activeSoundMode);
+        }, { once: true });
+        scene.appendChild(video);
+        video.play().catch(() => {
+          if (!video.muted) {
+            video.muted = true;
+            soundMuted = true;
+            localStorage.setItem('naksueb.soundMuted', 'true');
+            updateSoundToggle();
+          }
+          video.play().catch(() => {});
+        });
+      }
       const atmosphere = document.createElement('div');
       atmosphere.className = `scene-atmosphere atmosphere-${currentStageId}`;
       atmosphere.setAttribute('aria-hidden', 'true');
       atmosphere.innerHTML = '<div class="leaf-light"></div><div class="water-shimmer"></div><div class="fire-glow"></div>';
       scene.appendChild(atmosphere);
-      activeStage.lifeLayers.forEach((className) => {
+      if (!activeStage.video) activeStage.lifeLayers.forEach((className) => {
         const livingLayer = document.createElement('div');
         livingLayer.className = `living-cutout ${className}`;
         livingLayer.style.backgroundImage = `url("${activeStage.image}")`;
@@ -1108,7 +1137,10 @@ const stages = {
       stopCurrentSound();
       if (audioContext.state === 'suspended') audioContext.resume();
       if (mode === 'jungle-music') startJungleMusic();
-      if (mode.startsWith('ambience-')) startLevelAmbience(mode.slice('ambience-'.length));
+      if (mode.startsWith('ambience-')) {
+        const video = document.querySelector('.scene-video');
+        if (!video || video.classList.contains('video-failed')) startLevelAmbience(mode.slice('ambience-'.length));
+      }
     }
 
     function updateSoundToggle() {
@@ -1123,6 +1155,11 @@ const stages = {
     function toggleSound() {
       soundMuted = !soundMuted;
       localStorage.setItem('naksueb.soundMuted', String(soundMuted));
+      const gameVisible = !document.getElementById('oldstone-view').classList.contains('hidden');
+      document.querySelectorAll('.scene-video').forEach((video) => {
+        video.muted = soundMuted || !gameVisible;
+        if (!soundMuted && gameVisible) video.play().catch(() => {});
+      });
       if (masterVolume && audioContext) {
         const gain = soundMuted ? 0 : getEffectiveSoundGain(fixedSoundVolume);
         masterVolume.gain.setTargetAtTime(gain, audioContext.currentTime, .08);
@@ -1146,7 +1183,18 @@ const stages = {
     function showView(id) {
       views.forEach((viewId) => document.getElementById(viewId).classList.toggle('hidden', viewId !== id));
       if (currentUser && id !== 'login-view') sessionStorage.setItem('naksueb.currentView', id);
-      setSoundMode(id === 'oldstone-view' ? `ambience-${currentStageId}` : ['login-view', 'student-view', 'teacher-view'].includes(id) ? 'jungle-music' : 'silent');
+      document.querySelector('.sound-control').classList.toggle('hidden', id === 'teacher-view');
+      const sceneVideo = document.querySelector('.scene-video');
+      if (sceneVideo) {
+        if (id === 'oldstone-view') {
+          sceneVideo.muted = soundMuted;
+          sceneVideo.play().catch(() => {});
+        } else {
+          sceneVideo.pause();
+          sceneVideo.muted = true;
+        }
+      }
+      setSoundMode(id === 'oldstone-view' ? `ambience-${currentStageId}` : ['login-view', 'student-view'].includes(id) ? 'jungle-music' : 'silent');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
