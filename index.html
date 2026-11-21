@@ -1694,7 +1694,9 @@ const stages = {
         submitButton.disabled = true;
         try {
           const normalized = username.toLowerCase();
-          const email = normalized === 'krumhon' ? 'krumhon@teachers.naksueb.app' : studentAuthEmail(username);
+          // The existing teacher account in Supabase Auth uses this email.
+          // Keep the visible login identifier as the teacher username.
+          const email = normalized === 'krumhon' ? 'krumhon@gmail.com' : studentAuthEmail(username);
           const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: password.value });
           if (error || !data.user) {
             status.textContent = 'รหัสผู้เรียน/ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
