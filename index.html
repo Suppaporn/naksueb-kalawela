@@ -434,7 +434,7 @@
             </span>
           </label>
           <button class="submit" type="submit">เข้าสู่ระบบ</button>
-          <p class="route-note" id="route-note"><span aria-hidden="true">ⓘ</span><span>ระบบจะพาไปยังหน้าที่เหมาะกับบัญชีของคุณ</span></p>
+          <p class="route-note" id="route-note"><span aria-hidden="true">ⓘ</span><span>นักเรียนกรอกรหัสผู้เรียนและรหัสผ่านที่ครูตั้งให้ ชื่อที่แสดงไม่ใช่ข้อมูลเข้าสู่ระบบ</span></p>
           <p class="status" id="login-status" role="status" aria-live="polite"></p>
           <p class="prototype">บัญชีตัวอย่างใช้ทดสอบการนำทางเท่านั้น ยังไม่ใช่ระบบบัญชีจริง</p>
         </form>
@@ -463,7 +463,7 @@
               <label>รหัสผ่านเริ่มต้น<input id="new-student-password" required maxlength="64" placeholder="กำหนดรหัสผ่าน"></label>
               <button class="action-button" type="submit">เพิ่มผู้เรียน</button>
             </form>
-            <p class="add-note">ต้นแบบนี้เพิ่มบัญชีไว้ในหน่วยความจำชั่วคราวเท่านั้น ข้อมูลจะหายเมื่อปิดหรือโหลดหน้าใหม่ และยังไม่ใช่ระบบบัญชีจริง</p>
+            <p class="add-note">บัญชีที่เพิ่มจะบันทึกในเบราว์เซอร์นี้และใช้ได้ในแท็บอื่นของเครื่องเดียวกันเท่านั้น ยังไม่เชื่อมข้ามเครื่องหรือเป็นระบบบัญชีจริง</p>
             <h2 class="section-title">รายชื่อผู้เรียน</h2>
             <p class="add-note">ปุ่มรีเซ็ตล้างหลักฐานและกิจกรรมของผู้เรียนคนนั้น เพื่อให้เริ่มด่านใหม่ได้ ข้อมูลต้นแบบเก็บในเบราว์เซอร์เครื่องนี้</p>
             <div class="table-wrap">
@@ -625,17 +625,54 @@
     </div>
     <p class="evidence-meta" id="scene-caveat">ฉากนี้เป็นภาพจำลองจากหลักฐานหลายแหล่ง ไม่ใช่ภาพหรือแผนที่ของแหล่งโบราณคดีแห่งใดแห่งหนึ่ง</p>
   </dialog>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
   <script>
     const password = document.getElementById('password');
     const togglePassword = document.getElementById('toggle-password');
     const form = document.getElementById('login-form');
     const status = document.getElementById('login-status');
     const views = ['login-view', 'teacher-view', 'student-view', 'oldstone-view'];
-    const accounts = {
+    const supabaseConfig = window.NAKSUEB_SUPABASE_CONFIG;
+    const backendConfigured = Boolean(supabaseConfig?.url && supabaseConfig?.publishableKey);
+    const supabaseClient = window.supabase?.createClient && supabaseConfig?.url && supabaseConfig?.publishableKey
+      ? window.supabase.createClient(supabaseConfig.url, supabaseConfig.publishableKey, { auth: { persistSession: true, autoRefreshToken: true } })
+      : null;
+    const backendEnabled = Boolean(supabaseClient);
+    const studentAccountsStorageKey = 'naksueb:student-accounts';
+    const accounts = backendConfigured ? {} : {
       krumhon: { password: '2026', role: 'teacher', name: 'ครูหมอน' },
       '1111': { password: '1111', role: 'student', name: 'นักเรียนตัวอย่าง 1' }
     };
+    function mergeSavedStudentAccounts(serialized) {
+      if (arguments.length === 0) {
+        try {
+          serialized = localStorage.getItem(studentAccountsStorageKey);
+        } catch (error) {
+          console.warn('Unable to access saved student accounts.', error);
+          return;
+        }
+      }
+      if (!serialized) return;
+      try {
+        const savedAccounts = JSON.parse(serialized);
+        if (!savedAccounts || typeof savedAccounts !== 'object' || Array.isArray(savedAccounts)) return;
+        Object.entries(savedAccounts).forEach(([id, account]) => {
+          if (!id || !account || account.role !== 'student' || typeof account.password !== 'string' || typeof account.name !== 'string') return;
+          accounts[id] = { password: account.password, role: 'student', name: account.name };
+        });
+      } catch (error) {
+        console.warn('Unable to read saved student accounts.', error);
+      }
+    }
+    function saveStudentAccounts() {
+      const savedAccounts = Object.fromEntries(Object.entries(accounts).filter(([, account]) => account.role === 'student'));
+      localStorage.setItem(studentAccountsStorageKey, JSON.stringify(savedAccounts));
+    }
+    if (!backendConfigured) mergeSavedStudentAccounts();
     let currentUser = sessionStorage.getItem('naksueb.currentUser') || '';
+    let currentAuthUserId = '';
+    let currentProfile = null;
     let foundEvidence = new Set();
     let activityCount = 0;
     let currentQuestion = null;
@@ -949,7 +986,13 @@ const stages = {
       }
       currentStageId = stageId;
       activeStage = stages[stageId];
-      if (currentUser && recordAsActive) localStorage.setItem(activeStageStorageKey(currentUser), stageId);
+      if (currentUser && recordAsActive) {
+        localStorage.setItem(activeStageStorageKey(currentUser), stageId);
+        if (backendEnabled && currentProfile?.role === 'student') {
+          void supabaseClient.from('student_state').upsert({ student_id: currentAuthUserId, active_stage_id: stageId, updated_at: new Date().toISOString() }, { onConflict: 'student_id' })
+            .then(({ error }) => { if (error) console.error('Unable to save active stage.', error); });
+        }
+      }
       evidenceDataForStage = activeStage.evidenceData;
       questionPoolForStage = activeStage.questionPool;
       sessionStorage.setItem('naksueb.currentStage', stageId);
@@ -1206,17 +1249,116 @@ const stages = {
       showNotice.timer = window.setTimeout(() => toast.classList.add('hidden'), 3200);
     }
 
-    function routeAccount(username) {
-      const account = accounts[username];
+    function studentAuthEmail(studentCode) {
+      return `student-${studentCode.trim().toLowerCase()}@students.naksueb.app`;
+    }
+
+    async function persistCloudStage(studentId, loginName, stageId, progress) {
+      if (!supabaseClient || !studentId) return;
+      const { error } = await supabaseClient.from('student_progress').upsert({
+        student_id: studentId,
+        stage_id: stageId,
+        found_evidence: progress.foundEvidence,
+        activity_count: progress.activityCount,
+        passed: progress.passed,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'student_id,stage_id' });
+      if (error) throw error;
+      if (currentAuthUserId === studentId) {
+        const stateResult = await supabaseClient.from('student_state').upsert({
+          student_id: studentId,
+          active_stage_id: stageId,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'student_id' });
+        if (stateResult.error) throw stateResult.error;
+      }
+      if (!document.getElementById('teacher-view').classList.contains('hidden')) {
+        void refreshTeacherFromCloud();
+      }
+    }
+
+    async function loadCloudStudentData(profile) {
+      const { data: rows, error } = await supabaseClient.from('student_progress')
+        .select('stage_id,found_evidence,activity_count,passed')
+        .eq('student_id', profile.id);
+      if (error) throw error;
+      const byStage = new Map((rows || []).map((row) => [row.stage_id, row]));
+      stageOrder.forEach((stageId) => {
+        const row = byStage.get(stageId);
+        const key = progressStorageKey(profile.login_name, stageId);
+        if (!row) {
+          localStorage.removeItem(key);
+          return;
+        }
+        localStorage.setItem(key, JSON.stringify({
+          foundEvidence: row.found_evidence || [],
+          activityCount: row.activity_count || 0,
+          passed: Boolean(row.passed)
+        }));
+      });
+      const { data: state, error: stateError } = await supabaseClient.from('student_state')
+        .select('active_stage_id').eq('student_id', profile.id).maybeSingle();
+      if (stateError) throw stateError;
+      if (state?.active_stage_id) localStorage.setItem(activeStageStorageKey(profile.login_name), state.active_stage_id);
+      else localStorage.removeItem(activeStageStorageKey(profile.login_name));
+      return state?.active_stage_id || '';
+    }
+
+    async function loadCloudTeacherData() {
+      const { data: students, error } = await supabaseClient.from('profiles')
+        .select('id,login_name,display_name').eq('role', 'student').eq('teacher_id', currentAuthUserId);
+      if (error) throw error;
+      Object.keys(accounts).forEach((id) => { if (accounts[id].role === 'student') delete accounts[id]; });
+      const studentIds = (students || []).map((student) => student.id);
+      const progressResult = studentIds.length
+        ? await supabaseClient.from('student_progress').select('student_id,stage_id,found_evidence,activity_count,passed').in('student_id', studentIds)
+        : { data: [], error: null };
+      if (progressResult.error) throw progressResult.error;
+      const stateResult = studentIds.length
+        ? await supabaseClient.from('student_state').select('student_id,active_stage_id').in('student_id', studentIds)
+        : { data: [], error: null };
+      if (stateResult.error) throw stateResult.error;
+      const stateByUser = new Map((stateResult.data || []).map((row) => [row.student_id, row.active_stage_id]));
+      (students || []).forEach((student) => {
+        accounts[student.login_name] = { id: student.id, login_name: student.login_name, role: 'student', name: student.display_name };
+        const progressByStage = new Map((progressResult.data || []).filter((row) => row.student_id === student.id).map((row) => [row.stage_id, row]));
+        stageOrder.forEach((stageId) => {
+          const row = progressByStage.get(stageId);
+          const key = progressStorageKey(student.login_name, stageId);
+          if (!row) localStorage.removeItem(key);
+          else localStorage.setItem(key, JSON.stringify({ foundEvidence: row.found_evidence || [], activityCount: row.activity_count || 0, passed: Boolean(row.passed) }));
+        });
+        const activeStage = stateByUser.get(student.id);
+        if (activeStage) localStorage.setItem(activeStageStorageKey(student.login_name), activeStage);
+        else localStorage.removeItem(activeStageStorageKey(student.login_name));
+      });
+    }
+
+    async function refreshTeacherFromCloud() {
+      if (!backendEnabled || currentProfile?.role !== 'teacher') return;
+      try {
+        await loadCloudTeacherData();
+        renderTeacherStudents();
+      } catch (error) {
+        console.error('Unable to refresh teacher data.', error);
+      }
+    }
+
+    async function routeAccount(username, account = accounts[username], authUserId = '') {
       if (!account) return false;
-      currentUser = username;
+      currentProfile = account;
+      currentAuthUserId = authUserId || account.id || '';
+      currentUser = account.login_name || username;
+      const displayName = account.display_name || account.name || username;
       if (account.role === 'teacher') {
-        document.getElementById('teacher-greeting').textContent = `ยินดีต้อนรับ ${account.name}`;
+        document.getElementById('teacher-greeting').textContent = `ยินดีต้อนรับ ${displayName}`;
+        if (backendEnabled) await loadCloudTeacherData();
         renderTeacherStudents();
         showView('teacher-view');
       } else {
-        document.getElementById('student-greeting').textContent = `ยินดีต้อนรับ ${account.name} พร้อมออกเดินทางหรือยัง?`;
-        const requestedStage = sessionStorage.getItem('naksueb.currentStage') || 'oldstone';
+        document.getElementById('student-greeting').textContent = `ยินดีต้อนรับ ${displayName} พร้อมออกเดินทางหรือยัง?`;
+        const cloudActiveStage = backendEnabled ? await loadCloudStudentData(account) : '';
+        const requestedStage = cloudActiveStage || sessionStorage.getItem('naksueb.currentStage') || 'oldstone';
         activateStage(isStageUnlocked(requestedStage) ? requestedStage : 'oldstone', false);
         loadOldStoneProgress();
         const savedView = sessionStorage.getItem('naksueb.currentView');
@@ -1351,7 +1493,14 @@ const stages = {
     }
 
     function saveOldStoneProgress() {
-      localStorage.setItem(progressStorageKey(), JSON.stringify({ foundEvidence: [...foundEvidence], activityCount, passed: stagePassed }));
+      const progress = { foundEvidence: [...foundEvidence], activityCount, passed: stagePassed };
+      localStorage.setItem(progressStorageKey(), JSON.stringify(progress));
+      if (backendEnabled && currentProfile?.role === 'student') {
+        void persistCloudStage(currentAuthUserId, currentUser, currentStageId, progress).catch((error) => {
+          console.error('Unable to save student progress online.', error);
+          showNotice('บันทึกความคืบหน้าออนไลน์ไม่สำเร็จ กรุณาตรวจการเชื่อมต่อ');
+        });
+      }
     }
 
     function renderGameProgress() {
@@ -1536,31 +1685,70 @@ const stages = {
       togglePassword.setAttribute('aria-label', reveal ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน');
     });
 
-    form.addEventListener('submit', (event) => {
+    form.addEventListener('submit', async (event) => {
       event.preventDefault();
       const username = document.getElementById('username').value.trim();
+      if (backendEnabled) {
+        status.textContent = 'กำลังตรวจสอบบัญชี…';
+        const submitButton = form.querySelector('[type="submit"]');
+        submitButton.disabled = true;
+        try {
+          const normalized = username.toLowerCase();
+          const email = normalized === 'krumhon' ? 'krumhon@teachers.naksueb.app' : studentAuthEmail(username);
+          const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: password.value });
+          if (error || !data.user) {
+            status.textContent = 'รหัสผู้เรียน/ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
+            document.getElementById('username').focus();
+            return;
+          }
+          const { data: profile, error: profileError } = await supabaseClient.from('profiles')
+            .select('id,login_name,display_name,role,teacher_id').eq('id', data.user.id).maybeSingle();
+          if (profileError || !profile) {
+            await supabaseClient.auth.signOut();
+            status.textContent = 'บัญชีนี้ยังไม่ได้ตั้งค่าในระบบเกม กรุณาแจ้งครู';
+            return;
+          }
+          if (profile.login_name.toLowerCase() !== normalized) {
+            await supabaseClient.auth.signOut();
+            status.textContent = 'รหัสที่กรอกไม่ตรงกับบัญชี กรุณาตรวจสอบอีกครั้ง';
+            return;
+          }
+          status.textContent = '';
+          await routeAccount(profile.login_name, profile, data.user.id);
+        } catch (error) {
+          console.error('Sign-in or profile lookup failed.', error);
+          status.textContent = 'เชื่อมต่อระบบบัญชีไม่ได้ กรุณาลองใหม่อีกครั้ง';
+        } finally {
+          submitButton.disabled = false;
+        }
+        return;
+      }
+      mergeSavedStudentAccounts();
       const account = accounts[username];
       if (!account || account.password !== password.value) {
-        status.textContent = 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง ลองตรวจสอบแล้วกรอกใหม่';
+        status.textContent = 'เข้าสู่ระบบไม่ได้: ใช้รหัสผู้เรียนในช่องแรก และรหัสผ่านที่ครูตั้งให้ในช่องที่สอง ชื่อที่แสดงไม่ใช่ข้อมูลเข้าสู่ระบบ';
         document.getElementById('username').focus();
         return;
       }
       status.textContent = '';
       sessionStorage.setItem('naksueb.currentUser', username);
-      routeAccount(username);
+      await routeAccount(username);
     });
 
-    document.querySelectorAll('.logout-button').forEach((button) => button.addEventListener('click', () => {
+    document.querySelectorAll('.logout-button').forEach((button) => button.addEventListener('click', async () => {
       form.reset();
       status.textContent = '';
+      if (backendEnabled) await supabaseClient.auth.signOut();
       sessionStorage.removeItem('naksueb.currentUser');
       sessionStorage.removeItem('naksueb.currentView');
       currentUser = '';
+      currentAuthUserId = '';
+      currentProfile = null;
       showView('login-view');
       document.getElementById('username').focus();
     }));
 
-    document.getElementById('student-list').addEventListener('click', (event) => {
+    document.getElementById('student-list').addEventListener('click', async (event) => {
       const action = event.target.closest('[data-reset-selected], [data-reset-all]');
       if (!action) return;
       const studentId = action.dataset.resetStudent;
@@ -1578,17 +1766,42 @@ const stages = {
         ? `รีเซ็ตความคืบหน้าทุกด่านของ ${student.name} ใช่ไหม?`
         : `รีเซ็ต ${stageNames} ของ ${student.name} ใช่ไหม?`;
       if (!window.confirm(prompt)) return;
+      if (backendEnabled) {
+        const updates = selectedStages.map((stageId) => supabaseClient.from('student_progress').upsert({
+          student_id: student.id, stage_id: stageId, found_evidence: [], activity_count: 0, passed: false, updated_at: new Date().toISOString()
+        }, { onConflict: 'student_id,stage_id' }));
+        const results = await Promise.all(updates);
+        const failure = results.find((result) => result.error)?.error;
+        if (failure) {
+          console.error('Unable to reset cloud progress.', failure);
+          showNotice('รีเซ็ตออนไลน์ไม่สำเร็จ กรุณาลองใหม่');
+          return;
+        }
+        if (resetAll) {
+          const { error } = await supabaseClient.from('student_state').delete().eq('student_id', student.id);
+          if (error) {
+            console.error('Unable to reset active stage online.', error);
+            showNotice('รีเซ็ตด่านแล้ว แต่ล้างสถานะด่านล่าสุดไม่สำเร็จ');
+          }
+        }
+      }
       selectedStages.forEach((stageId) => {
         localStorage.setItem(progressStorageKey(studentId, stageId), JSON.stringify({ foundEvidence: [], activityCount: 0, passed: false }));
         sessionStorage.removeItem(progressStorageKey(studentId, stageId));
       });
       if (resetAll) localStorage.removeItem(activeStageStorageKey(studentId));
       renderTeacherStudents();
+      if (backendEnabled) await refreshTeacherFromCloud();
       if (currentUser === studentId) loadOldStoneProgress();
       showNotice(resetAll ? `รีเซ็ตทุกด่านของ ${student.name} แล้ว` : `รีเซ็ต ${stageNames} ของ ${student.name} แล้ว`);
     });
 
     window.addEventListener('storage', (event) => {
+      if (event.key === studentAccountsStorageKey) {
+        mergeSavedStudentAccounts(event.newValue);
+        if (!document.getElementById('teacher-view').classList.contains('hidden')) renderTeacherStudents();
+        return;
+      }
       if (!event.key || !event.key.startsWith('naksueb:')) return;
       const isProgressKey = new RegExp(':(' + stageOrder.join('|') + ')$').test(event.key);
       const isActiveStageKey = event.key.startsWith('naksueb:active-stage:');
@@ -1597,9 +1810,26 @@ const stages = {
       if (!document.getElementById('teacher-view').classList.contains('hidden')) renderTeacherStudents();
     });
 
-    const rememberedUser = sessionStorage.getItem('naksueb.currentUser');
-    if (rememberedUser && !routeAccount(rememberedUser)) {
-      sessionStorage.removeItem('naksueb.currentUser');
+    if (backendEnabled) {
+      (async () => {
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+        if (error || !session?.user) return;
+        const { data: profile, error: profileError } = await supabaseClient.from('profiles')
+          .select('id,login_name,display_name,role,teacher_id').eq('id', session.user.id).maybeSingle();
+        if (profileError || !profile) {
+          console.error('Saved account has no matching game profile.', profileError);
+          await supabaseClient.auth.signOut();
+          return;
+        }
+        try { await routeAccount(profile.login_name, profile, session.user.id); }
+        catch (routeError) { console.error('Unable to restore saved account.', routeError); }
+      })();
+      window.setInterval(() => {
+        if (!document.getElementById('teacher-view').classList.contains('hidden')) void refreshTeacherFromCloud();
+      }, 12000);
+    } else {
+      const rememberedUser = sessionStorage.getItem('naksueb.currentUser');
+      if (rememberedUser && !routeAccount(rememberedUser)) sessionStorage.removeItem('naksueb.currentUser');
     }
 
     document.getElementById('open-prehistory').addEventListener('click', () => {
@@ -1675,7 +1905,7 @@ const stages = {
     });
     document.getElementById('return-to-scene').addEventListener('click', () => document.getElementById('evidence-required-dialog').close());
 
-    document.getElementById('add-student-form').addEventListener('submit', (event) => {
+    document.getElementById('add-student-form').addEventListener('submit', async (event) => {
       event.preventDefault();
       const idField = document.getElementById('new-student-id');
       const nameField = document.getElementById('new-student-name');
@@ -1687,10 +1917,36 @@ const stages = {
         idField.addEventListener('input', () => idField.setCustomValidity(''), { once: true });
         return;
       }
+      if (backendEnabled) {
+        const submitButton = event.target.querySelector('[type="submit"]');
+        submitButton.disabled = true;
+        try {
+          const { error } = await supabaseClient.functions.invoke('create-student', {
+            body: { studentCode: id, displayName: nameField.value.trim(), password: passwordField.value }
+          });
+          if (error) throw error;
+          await refreshTeacherFromCloud();
+          event.target.reset();
+          showNotice('เพิ่มบัญชีผู้เรียนแล้ว ใช้รหัสผู้เรียนกับรหัสผ่านที่กำหนดได้จากทุกเครื่อง');
+        } catch (error) {
+          console.error('Unable to create student account.', error);
+          showNotice('เพิ่มผู้เรียนไม่สำเร็จ ตรวจว่ารหัสไม่ซ้ำและรหัสผ่านยาวอย่างน้อย 8 ตัว');
+        } finally {
+          submitButton.disabled = false;
+        }
+        return;
+      }
       accounts[id] = { password: passwordField.value, role: 'student', name: nameField.value.trim() };
+      try {
+        saveStudentAccounts();
+      } catch (error) {
+        delete accounts[id];
+        showNotice('เบราว์เซอร์บันทึกบัญชีไม่ได้ จึงยังเพิ่มผู้เรียนไม่สำเร็จ');
+        return;
+      }
       renderTeacherStudents();
       event.target.reset();
-      showNotice('เพิ่มบัญชีตัวอย่างสำหรับรอบนี้แล้ว');
+      showNotice('เพิ่มผู้เรียนแล้ว บัญชีนี้ใช้ได้ในเบราว์เซอร์เครื่องนี้');
     });
   </script>
 </body>
