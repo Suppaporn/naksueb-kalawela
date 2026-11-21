@@ -1693,10 +1693,13 @@ const stages = {
         const submitButton = form.querySelector('[type="submit"]');
         submitButton.disabled = true;
         try {
-          const normalized = username.toLowerCase();
+          const enteredLogin = username.toLowerCase();
+          const normalized = enteredLogin === 'krumhon@gmail.com' ? 'krumhon' : enteredLogin;
           // The existing teacher account in Supabase Auth uses this email.
-          // Keep the visible login identifier as the teacher username.
-          const email = normalized === 'krumhon' ? 'krumhon@gmail.com' : studentAuthEmail(username);
+          // If the learner enters an email, authenticate with that exact email.
+          // Keep the teacher username as a convenience for the existing account.
+          const email = enteredLogin.includes('@') ? enteredLogin :
+            normalized === 'krumhon' ? 'krumhon@gmail.com' : studentAuthEmail(username);
           const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: password.value });
           if (error || !data.user) {
             status.textContent = 'รหัสผู้เรียน/ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
@@ -1710,7 +1713,7 @@ const stages = {
             status.textContent = 'บัญชีนี้ยังไม่ได้ตั้งค่าในระบบเกม กรุณาแจ้งครู';
             return;
           }
-          if (profile.login_name.toLowerCase() !== normalized) {
+          if (!enteredLogin.includes('@') && profile.login_name.toLowerCase() !== normalized) {
             await supabaseClient.auth.signOut();
             status.textContent = 'รหัสที่กรอกไม่ตรงกับบัญชี กรุณาตรวจสอบอีกครั้ง';
             return;
