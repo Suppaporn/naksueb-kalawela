@@ -1693,13 +1693,12 @@ const stages = {
         const submitButton = form.querySelector('[type="submit"]');
         submitButton.disabled = true;
         try {
-          const enteredLogin = username.toLowerCase();
+          const enteredLogin = username.trim().toLowerCase();
           const normalized = enteredLogin === 'krumhon@gmail.com' ? 'krumhon' : enteredLogin;
-          // The existing teacher account in Supabase Auth uses this email.
-          // If the learner enters an email, authenticate with that exact email.
-          // Keep the teacher username as a convenience for the existing account.
-          const email = enteredLogin.includes('@') ? enteredLogin :
-            normalized === 'krumhon' ? 'krumhon@gmail.com' : studentAuthEmail(username);
+          // The existing teacher Auth account uses this internal alias, not Gmail.
+          const email = ['krumhon', 'krumhon@gmail.com'].includes(enteredLogin)
+            ? 'krumhon@teachers.naksueb.app'
+            : (enteredLogin.includes('@') ? enteredLogin : studentAuthEmail(username));
           const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: password.value });
           if (error || !data.user) {
             status.textContent = 'รหัสผู้เรียน/ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง';
@@ -1935,7 +1934,16 @@ const stages = {
           showNotice('เพิ่มบัญชีผู้เรียนแล้ว ใช้รหัสผู้เรียนกับรหัสผ่านที่กำหนดได้จากทุกเครื่อง');
         } catch (error) {
           console.error('Unable to create student account.', error);
-          showNotice('เพิ่มผู้เรียนไม่สำเร็จ ตรวจว่ารหัสไม่ซ้ำและรหัสผ่านยาวอย่างน้อย 8 ตัว');
+          let detail = error?.message || '';
+          if (error?.context && typeof error.context.json === 'function') {
+            try {
+              const responseBody = await error.context.json();
+              detail = responseBody?.error || detail;
+            } catch { /* Use the function client's message when no JSON body is available. */ }
+          }
+          showNotice(detail
+            ? `เพิ่มผู้เรียนไม่สำเร็จ: ${detail}`
+            : 'เพิ่มผู้เรียนไม่สำเร็จ กรุณาตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง');
         } finally {
           submitButton.disabled = false;
         }
