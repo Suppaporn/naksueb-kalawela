@@ -113,3 +113,8 @@ grant select on public.profiles to authenticated;
 grant select, insert, update on public.student_progress to authenticated;
 grant select, insert, update, delete on public.student_state to authenticated;
 
+-- The create-student Edge Function uses the service role to create the Auth
+-- user and its profile. Keep its table access explicit for reproducible setup.
+grant usage on schema public to service_role;
+grant select, insert, update, delete on public.profiles to service_role;
+
