@@ -157,6 +157,22 @@
     .view-logo { color:#ffe3a3; font-size:clamp(26px,4vw,38px); font-weight:900; text-shadow:0 3px 9px rgba(0,0,0,.45); }
     .view-heading { margin:0; color:#fff3d3; font-size:clamp(30px,4vw,44px); text-shadow:0 3px 10px rgba(0,0,0,.4); }
     .view-subheading { margin:7px 0 0; color:#f6e5c0; }
+    #student-greeting {
+      display:table;
+      max-width:100%;
+      margin-top:10px;
+      padding:8px 13px;
+      border:1px solid rgba(243,203,126,.58);
+      border-radius:12px;
+      color:#fff6df;
+      background:rgba(24,61,53,.76);
+      box-shadow:0 4px 12px rgba(9,30,23,.16);
+      backdrop-filter:blur(3px);
+      font-size:clamp(14px,1.35vw,16px);
+      font-weight:700;
+      line-height:1.55;
+      text-shadow:0 1px 2px rgba(0,0,0,.22);
+    }
     .light-button,.action-button,.map-button,.back-button {
       border:1px solid rgba(237,210,151,.85); border-radius:12px; padding:11px 18px; cursor:pointer;
       font:inherit; font-weight:800; transition:transform .12s, filter .12s;
@@ -176,6 +192,18 @@
     .stat strong { display:block; color:#6b481f; font-size:28px; }
     .stat span { color:#756451; font-size:14px; }
     .section-title { margin:22px 0 12px; color:#4c351f; font-size:21px; }
+    .teacher-questions { margin:8px 0 22px; padding:16px; border:1px solid #e5d4b2; border-radius:16px; background:#fbf5e9; }
+    .teacher-questions-top { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+    .teacher-questions-top .section-title { margin:0; }
+    .teacher-question-tools { display:flex; align-items:center; gap:9px; }
+    .teacher-question-filter-label { color:#76664f; font-size:13px; }
+    .teacher-question-tools select { min-height:40px; padding:0 10px; border:1px solid #d7c397; border-radius:10px; color:#49351f; background:#fffdf7; font:inherit; }
+    .teacher-question-count { min-width:34px; padding:5px 10px; border-radius:999px; color:#fff8e9; background:#9a612a; text-align:center; font-weight:800; }
+    .teacher-question-list { display:grid; gap:10px; }
+    .teacher-question-card { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px; align-items:center; padding:12px 14px; border:1px solid #e3d5ba; border-radius:13px; background:#fffdf7; }
+    .teacher-question-card h3 { margin:0 0 5px; color:#49351f; font-size:16px; }
+    .teacher-question-meta { margin:0; color:#76664f; font-size:13px; line-height:1.5; }
+    .teacher-question-empty { margin:0; padding:17px; border:1px dashed #d5c5a7; border-radius:12px; color:#76664f; background:#fffaf0; text-align:center; line-height:1.6; }
     .table-wrap { overflow-x:auto; }
     .student-table { width:100%; border-collapse:collapse; min-width:790px; }
     .student-table th,.student-table td { padding:12px 10px; text-align:left; border-bottom:1px solid #e5d8bf; }
@@ -200,7 +228,17 @@
     .map-art { position:relative; height:clamp(220px,25vw,300px); display:flex; align-items:flex-start; justify-content:flex-start; overflow:hidden; background-color:#6b8850; background-image:url("map-illustrations.png"); background-repeat:no-repeat; background-size:200% auto; background-position:left center; }
     .map-art::before { content:""; position:absolute; inset:0; background:linear-gradient(180deg,rgba(16,39,30,.35),transparent 32%,transparent 70%,rgba(16,39,30,.22)); }
     .map-card.history .map-art { background-position:right center; }
-    .history-board-art { height:clamp(180px,24vw,280px); margin:0 0 16px; border:2px solid #e4c988; border-radius:20px; background-position:right center; }
+    .prehistory-summary-figure { margin:0 0 16px; }
+    .prehistory-summary-figure img { display:block; width:100%; max-height:440px; object-fit:cover; border:2px solid #e4c988; border-radius:20px; }
+    .prehistory-summary-figure figcaption { margin-top:7px; color:#78684f; font-size:12px; line-height:1.5; }
+    .prehistory-summary-intro { margin:0 0 17px; color:#5b4932; line-height:1.7; }
+    .prehistory-summary-list { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:10px; margin:0 0 18px; padding:0; list-style:none; }
+    .prehistory-summary-list li { padding:13px; border:1px solid #decba5; border-radius:15px; background:#fffaf0; }
+    .prehistory-summary-list strong { display:block; margin-bottom:9px; color:#65421c; font-size:16px; }
+    .prehistory-summary-list span { display:block; margin-top:6px; color:#5d4e3b; font-size:13px; line-height:1.55; }
+    .prehistory-summary-list b { color:#81501b; }
+    .prehistory-summary-footer { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; padding:14px; border:1px solid #e6d5b4; border-radius:14px; background:#f7efdf; }
+    .prehistory-summary-footer p { margin:0; color:#64533d; font-size:13px; line-height:1.55; }
     .map-card.locked .map-art { filter:grayscale(.35); }
     .map-art .map-ribbon { position:absolute; z-index:2; top:16px; left:16px; padding:7px 13px; border:1px solid #f0d28c; border-radius:999px; color:#fff4d3; background:rgba(73,48,25,.86); box-shadow:0 4px 10px rgba(0,0,0,.25); font-size:14px; font-weight:800; }
     .map-card.locked .map-art::after { content:"⛓️"; position:absolute; z-index:2; left:50%; top:50%; transform:translate(-50%,-50%) rotate(-12deg); padding:14px 20px; border:2px solid rgba(255,255,255,.7); border-radius:18px; color:#f7f3e8; background:rgba(60,64,62,.7); box-shadow:0 7px 16px rgba(0,0,0,.28); font-size:48px; }
@@ -237,7 +275,7 @@
     .game-layout { display:grid; grid-template-columns:205px minmax(0,1fr) 235px; gap:12px; align-items:stretch; }
     .guide-panel,.evidence-panel { color:var(--ink); border:2px solid #e4cc9a; border-radius:20px; background:rgba(255,248,233,.97); box-shadow:0 12px 30px rgba(12,31,25,.3); }
     .guide-panel { padding:18px 15px; display:flex; flex-direction:column; align-items:center; text-align:center; }
-    .guide-avatar { width:132px; height:176px; display:block; margin:2px auto 12px; border:3px solid #e4bd68; border-radius:18px; background:#d8c18d url("login-background.png") left bottom / 280% auto no-repeat; box-shadow:0 6px 14px rgba(80,52,22,.18); }
+    .guide-avatar { width:132px; height:176px; display:block; margin:2px auto 12px; border:3px solid #e4bd68; border-radius:18px; background:#d8c18d url("guide-explorer.gif") center / 115% auto no-repeat; box-shadow:0 6px 14px rgba(80,52,22,.18); }
     .guide-panel h2 { margin:0; font-size:20px; color:#51381f; }
     .guide-panel p { margin:8px 0 16px; padding:12px; border:1px solid #e2d0ad; border-radius:14px; color:#655541; background:#f7efdf; box-shadow:0 3px 9px rgba(80,52,22,.08); font-size:14px; line-height:1.65; }
     .talk-button { margin-top:auto; min-height:44px; border:1px solid #d3a851; border-radius:12px; padding:8px 12px; color:#fff9e9; background:linear-gradient(#bd782d,#98551e); font:inherit; font-weight:800; cursor:pointer; }
@@ -342,6 +380,11 @@
     .dialog-close { position:absolute; top:10px; right:12px; width:38px; height:38px; border:0; border-radius:50%; color:#654a2a; background:#efe1c4; font-size:23px; cursor:pointer; }
     .game-dialog h2 { margin:0 42px 12px 0; color:#51381f; font-size:25px; }
     .game-dialog p { color:#62543f; line-height:1.7; }
+    .teacher-answer-form { display:grid; gap:12px; }
+    .teacher-answer-question { padding:12px 14px; border:1px solid #e1d0ad; border-radius:12px; background:#f7f1e4; }
+    .teacher-answer-form label { display:grid; gap:7px; color:#51381f; font-weight:800; }
+    .teacher-answer-form textarea { width:100%; min-height:135px; resize:vertical; padding:12px; border:1px solid #d6c39d; border-radius:12px; color:var(--ink); background:#fffdf8; font:inherit; line-height:1.6; }
+    .teacher-answer-actions { display:flex; justify-content:flex-end; gap:9px; }
     .evidence-meta { padding:12px; border-radius:12px; background:#f0e7d4; font-size:14px; }
     .source-link { color:#315e49; font-weight:700; }
     .question-type { display:inline-block; padding:5px 10px; border-radius:999px; color:#4c6a3f; background:#e3ecd8; font-size:13px; font-weight:800; }
@@ -354,6 +397,12 @@
     .next-question { display:none; margin-top:12px; }
     .next-question.show { display:inline-flex; }
     .guide-dialog-text { font-size:18px; }
+    .guide-chat-header { display:grid; grid-template-columns:112px minmax(0,1fr); gap:15px; align-items:center; margin:0 32px 12px 0; }
+    .guide-chat-portrait { width:112px; height:150px; border:3px solid #e4bd68; border-radius:16px; background:#d8c18d url("login-background.png") left bottom / 280% auto no-repeat; box-shadow:0 6px 14px rgba(80,52,22,.18); }
+    .guide-chat-portrait.is-answering { background-image:url("guide-presenting.gif"); background-position:center; background-size:115% auto; }
+    .guide-chat-portrait.is-thinking { background-image:url("guide-thinking.gif"); background-position:center; background-size:115% auto; }
+    .guide-chat-header h2 { margin-bottom:10px; }
+    .guide-chat-header .evidence-meta { margin:0; }
     .chat-log { display:grid; gap:10px; max-height:260px; overflow:auto; margin:12px 0; padding:12px; border:1px solid #e1d0ad; border-radius:13px; background:#f7f1e4; }
     .chat-message { width:fit-content; max-width:92%; padding:9px 12px; border-radius:14px; color:#4f412f; background:#fffdf6; box-shadow:0 2px 5px rgba(70,50,25,.08); line-height:1.55; }
     .chat-message.user { justify-self:end; color:#fff8e9; background:#477354; }
@@ -364,6 +413,9 @@
     .review-button { margin:12px 8px 0 0; }
     .notice-toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); z-index:10; max-width:calc(100% - 30px); padding:13px 18px; border-radius:12px; color:#fff8e9; background:#173c34; box-shadow:0 8px 24px rgba(0,0,0,.3); }
     @media (max-width: 900px) {
+      .prehistory-summary-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .teacher-question-card { grid-template-columns:1fr; }
+      .teacher-questions-top { align-items:flex-start; }
       .page { min-height: 100vh; grid-template-columns: 1fr; gap: 10px; padding: 28px 20px 34px; background-position: 34% center; }
       .brand { align-self: center; padding: 0; margin: 0; max-width: none; text-align: center; }
       .brand-title-box { margin: auto; padding: 16px 15px; }
@@ -387,7 +439,7 @@
       .game-layout { grid-template-columns:1fr; }
       .scene-stage { order:1; height:min(62vh,540px); min-height:390px; }
       .guide-panel { order:2; display:grid; grid-template-columns:64px 1fr; gap:0 12px; align-items:center; text-align:left; padding:12px; }
-      .guide-avatar { grid-row:span 2; width:70px; height:94px; margin:0; border-radius:13px; background-size:280% auto; }
+      .guide-avatar { grid-row:span 2; width:70px; height:94px; margin:0; border-radius:13px; }
       .guide-panel h2 { align-self:end; font-size:18px; }
       .guide-panel p { align-self:start; margin:2px 0 0; font-size:13px; }
       .talk-button { grid-column:2; justify-self:start; margin:8px 0 0; }
@@ -398,6 +450,12 @@
       .next-stage-shortcut { position:static; justify-self:end; }
       .sound-control { left:8px; bottom:8px; }
       .question-text { font-size:18px; }
+    }
+    @media (max-width: 480px) {
+      .prehistory-summary-list { grid-template-columns:1fr; }
+      .guide-chat-header { grid-template-columns:84px minmax(0,1fr); gap:10px; margin-right:20px; }
+      .guide-chat-portrait { width:84px; height:112px; }
+      .guide-chat-header h2 { font-size:20px; }
     }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }
   </style>
@@ -456,6 +514,19 @@
               <div class="stat"><span>เริ่มเล่นแล้ว</span><strong id="started-count">0</strong></div>
               <div class="stat"><span>เรียนจบชุดแรก</span><strong id="completed-count">0</strong></div>
             </div>
+            <section class="teacher-questions" aria-labelledby="teacher-questions-heading">
+              <div class="teacher-questions-top">
+                <h2 class="section-title" id="teacher-questions-heading">คำถามจากนักเรียนที่รอครูตอบ</h2>
+                <div class="teacher-question-tools">
+                  <label class="teacher-question-filter-label" for="teacher-question-filter">กรองด่าน</label>
+                  <select id="teacher-question-filter" aria-label="กรองคำถามตามด่าน"><option value="all">ทุกด่าน</option></select>
+                  <span class="teacher-question-count" id="teacher-question-count" aria-label="จำนวนคำถามรอคำตอบ">0</span>
+                </div>
+              </div>
+              <div class="teacher-question-list" id="teacher-question-list" aria-live="polite">
+                <p class="teacher-question-empty">ยังไม่มีคำถามที่รอคำตอบ</p>
+              </div>
+            </section>
             <h2 class="section-title">เพิ่มผู้เรียน</h2>
             <form class="add-form" id="add-student-form">
               <label>รหัสผู้เรียน<input id="new-student-id" required maxlength="24" placeholder="เช่น 2222"></label>
@@ -509,11 +580,22 @@
             <div class="stage-list" id="stage-list" aria-label="เลือกด่านก่อนประวัติศาสตร์"></div>
             <p class="add-note">ทำกิจกรรมให้ผ่านตามลำดับ เพื่อเปิดด่านถัดไป</p>
           </section>
-          <section class="stage-board" id="history-board" aria-label="แผนที่สมัยประวัติศาสตร์">
-            <h2 class="section-title">แผนที่สมัยประวัติศาสตร์</h2>
-            <div class="map-art history-board-art" aria-hidden="true"><span class="map-ribbon">ปลดล็อกแล้ว</span></div>
-            <div class="dashboard-panel">
-              <p class="view-subheading">ปลดล็อกแผนที่แล้ว! ด่านในสมัยประวัติศาสตร์จะปรากฏเมื่อเพิ่มชุดเนื้อหานี้</p>
+          <section class="stage-board" id="history-board" aria-label="สรุปสมัยก่อนประวัติศาสตร์ก่อนเข้าสมัยประวัติศาสตร์">
+            <h2 class="section-title">สรุปก่อนเข้าสมัยประวัติศาสตร์</h2>
+            <p class="prehistory-summary-intro">ลองทบทวนว่าเครื่องมือและวิถีชีวิตของผู้คนเปลี่ยนไปอย่างไรตลอด 5 ยุคที่เราเพิ่งสำรวจ</p>
+            <figure class="prehistory-summary-figure">
+              <img src="prehistory-summary.png" alt="ภาพจำลองจากซ้ายไปขวา: ผู้คนกะเทาะหิน หาอาหารจากธรรมชาติ ใช้หินขัดและภาชนะ ทำเครื่องมือสำริด แล้วทำเครื่องมือเหล็ก">
+              <figcaption>ภาพประกอบจำลองเพื่อช่วยจำ ไม่ใช่ภาพเหตุการณ์จริง และแต่ละชุมชนอาจเปลี่ยนแปลงไม่พร้อมกัน</figcaption>
+            </figure>
+            <ol class="prehistory-summary-list" aria-label="ห้ายุคก่อนประวัติศาสตร์ตามลำดับ">
+              <li><strong>1 · ยุคหินเก่า</strong><span><b>เครื่องมือ:</b> หินกะเทาะ</span><span><b>ชีวิต:</b> ล่าสัตว์ เก็บพืชป่า และย้ายที่ตามแหล่งอาหาร</span></li>
+              <li><strong>2 · ยุคหินกลาง</strong><span><b>เครื่องมือ:</b> หินกะเทาะที่เล็กและละเอียดขึ้น</span><span><b>ชีวิต:</b> หาของป่า จับปลา และอยู่ร่วมกันเป็นกลุ่ม</span></li>
+              <li><strong>3 · ยุคหินใหม่</strong><span><b>เครื่องมือ:</b> หินขัดและภาชนะดินเผา</span><span><b>ชีวิต:</b> บางชุมชนเริ่มเพาะปลูกและตั้งถิ่นฐาน</span></li>
+              <li><strong>4 · ยุคสำริด</strong><span><b>เครื่องมือ:</b> สำริดจากทองแดงผสมดีบุก</span><span><b>ชีวิต:</b> หล่อเครื่องมือและเครื่องประดับในชุมชน</span></li>
+              <li><strong>5 · ยุคเหล็ก</strong><span><b>เครื่องมือ:</b> ขวาน ใบหอก และของใช้จากเหล็ก</span><span><b>ชีวิต:</b> ทำเกษตรและติดต่อแลกเปลี่ยนระหว่างชุมชน</span></li>
+            </ol>
+            <div class="prehistory-summary-footer">
+              <p>จบการทบทวนสมัยก่อนประวัติศาสตร์แล้ว · เนื้อหาด่านสมัยประวัติศาสตร์จะเพิ่มในลำดับถัดไป<br><a class="source-link" href="https://www.finearts.go.th/storage/contents/2021/11/file/6DsahUTNGjoc6zk8PzxrXji028ruxIoUFsqRtTxW.pdf" target="_blank" rel="noreferrer">อ่านข้อมูลการแบ่งยุคจากกรมศิลปากร ↗</a></p>
               <button class="action-button" id="back-from-history" type="button">กลับไปหน้าแผนที่</button>
             </div>
           </section>
@@ -541,7 +623,7 @@
 
           <div class="game-layout">
             <aside class="guide-panel">
-              <div class="guide-avatar" role="img" aria-label="ตัวละครไกด์นักสืบผู้หญิงในชุดเรียบง่าย"></div>
+              <div class="guide-avatar" role="img" aria-label="ไกด์นักสืบกำลังทักทายนักเรียน"></div>
               <h2>ไกด์นักสืบ</h2>
               <p id="guide-message">ลองสังเกตสิ่งของในฉากก่อนนะ ถ้ายังไม่แน่ใจ กดคุยกับฉันเพื่อขอคำใบ้ได้</p>
               <button class="talk-button" id="talk-to-guide" type="button">คุยกับตัวละคร</button>
@@ -609,8 +691,13 @@
   </dialog>
   <dialog class="game-dialog" id="guide-dialog">
     <button class="dialog-close" type="button" aria-label="ปิด">×</button>
-    <h2>คุยกับไกด์นักสืบ</h2>
-    <p class="evidence-meta">ไกด์ตอบจากข้อมูลในเกม ลองถามเรื่องยุคหินเก่าหรือขอคำใบ้สิ่งของในฉาก</p>
+    <div class="guide-chat-header">
+      <div class="guide-chat-portrait" id="guide-chat-portrait" role="img" aria-label="ไกด์นักสืบ"></div>
+      <div>
+        <h2>คุยกับไกด์นักสืบ</h2>
+        <p class="evidence-meta">ไกด์ตอบจากข้อมูลในเกม ลองถามเรื่องยุคนี้หรือขอคำใบ้สิ่งของในฉาก</p>
+      </div>
+    </div>
     <div class="chat-log" id="guide-chat-log" role="log" aria-live="polite" aria-label="บทสนทนากับไกด์นักสืบ">
       <div class="chat-message">สวัสดี! ลองสังเกตเพิงผาและก้อนหินที่มีรอยกะเทาะนะ ถ้าอยากได้คำใบ้ ถามฉันได้เลย</div>
     </div>
@@ -624,6 +711,16 @@
       <button type="button" data-guide-question="ยุคหินเก่าคืออะไร">ยุคหินเก่าคืออะไร</button>
     </div>
     <p class="evidence-meta" id="scene-caveat">ฉากนี้เป็นภาพจำลองจากหลักฐานหลายแหล่ง ไม่ใช่ภาพหรือแผนที่ของแหล่งโบราณคดีแห่งใดแห่งหนึ่ง</p>
+  </dialog>
+  <dialog class="game-dialog" id="teacher-question-dialog" aria-labelledby="teacher-question-dialog-title">
+    <button class="dialog-close" type="button" aria-label="ปิด">×</button>
+    <h2 id="teacher-question-dialog-title">เพิ่มคำตอบให้ไกด์</h2>
+    <p class="evidence-meta" id="teacher-question-student"></p>
+    <div class="teacher-answer-question"><strong>คำถาม</strong><p id="teacher-question-prompt" style="margin:6px 0 0"></p></div>
+    <form class="teacher-answer-form" id="teacher-answer-form">
+      <label for="teacher-answer-input">คำตอบสำหรับนักเรียน ป.4<textarea id="teacher-answer-input" maxlength="1200" required placeholder="เขียนคำตอบสั้น ๆ ใช้ภาษาที่เข้าใจง่าย และอิงข้อมูลของด่านนี้"></textarea></label>
+      <div class="teacher-answer-actions"><button class="back-button" type="button" id="cancel-teacher-answer">ยกเลิก</button><button class="action-button" type="submit">บันทึกคำตอบให้ไกด์</button></div>
+    </form>
   </dialog>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-config.js"></script>
@@ -673,6 +770,8 @@
     let currentUser = sessionStorage.getItem('naksueb.currentUser') || '';
     let currentAuthUserId = '';
     let currentProfile = null;
+    let teacherQuestionRows = [];
+    let selectedTeacherQuestion = null;
     let foundEvidence = new Set();
     let activityCount = 0;
     let currentQuestion = null;
@@ -857,11 +956,20 @@ const stages = {
 
     let currentStageId = 'oldstone';
     let activeStage = stages.oldstone;
+    let guidePortraitTimer = null;
+    let guideReplySequence = 0;
     let evidenceDataForStage = activeStage.evidenceData;
     let questionPoolForStage = activeStage.questionPool;
     let stagePassed = false;
 
     const stageOrder = Object.keys(stages);
+    const teacherQuestionFilter = document.getElementById('teacher-question-filter');
+    stageOrder.forEach((stageId, index) => {
+      const option = document.createElement('option');
+      option.value = stageId;
+      option.textContent = `ด่าน ${index + 1} · ${stages[stageId].title}`;
+      teacherQuestionFilter.append(option);
+    });
     function isStageUnlocked(stageId, user = currentUser) {
       const index = stageOrder.indexOf(stageId);
       if (index < 0) return false;
@@ -909,10 +1017,10 @@ const stages = {
       card.setAttribute('aria-disabled', String(!unlocked));
       card.querySelector('.map-ribbon').textContent = unlocked ? 'แผนที่ 2 · เปิดแล้ว' : 'แผนที่ 2';
       card.querySelector('p').textContent = unlocked
-        ? 'ปลดล็อกแล้ว ไปยังแผนที่สมัยประวัติศาสตร์'
+        ? 'ปลดล็อกแล้ว ทบทวน 5 ยุคก่อนก้าวสู่สมัยประวัติศาสตร์'
         : 'แผนที่นี้จะเปิดเมื่อผ่านครบทั้งห้าด่านสมัยก่อนประวัติศาสตร์';
       button.disabled = !unlocked;
-      button.textContent = unlocked ? 'เปิดแผนที่' : 'ยังไม่เปิด';
+      button.textContent = unlocked ? 'ดูสรุป 5 ยุค' : 'ยังไม่เปิด';
       return unlocked;
     }
 
@@ -1000,6 +1108,8 @@ const stages = {
       document.getElementById('era-subtitle').textContent = activeStage.subtitle;
       document.getElementById('guide-message').textContent = activeStage.intro;
       document.getElementById('scene-caveat').textContent = activeStage.caveat;
+      guideReplySequence++;
+      showGuidePortrait('idle');
       const chatLog = document.getElementById('guide-chat-log');
       chatLog.replaceChildren();
       const greeting = document.createElement('div');
@@ -1019,6 +1129,7 @@ const stages = {
 
     let audioContext = null;
     let masterVolume = null;
+    let clapNoiseBuffer = null;
     let audioActive = false;
     let activeSoundMode = 'jungle-music';
     let scheduledAudioNodes = [];
@@ -1133,6 +1244,67 @@ const stages = {
       scheduledAudioNodes.push(source);
     }
 
+    function playClickSfx() {
+      if (soundMuted || !audioActive || !ensureAudioContext()) return;
+      if (audioContext.state === 'suspended') audioContext.resume();
+      playTone(1050, .055, 'triangle', .035, 690);
+      playTone(1580, .028, 'sine', .009, 1180);
+    }
+
+    function playClapBurst(startAt, volume = .045) {
+      if (soundMuted || !audioContext || !masterVolume) return;
+      if (!clapNoiseBuffer) {
+        const size = Math.floor(audioContext.sampleRate * .14);
+        clapNoiseBuffer = audioContext.createBuffer(1, size, audioContext.sampleRate);
+        const samples = clapNoiseBuffer.getChannelData(0);
+        for (let i = 0; i < size; i++) samples[i] = (Math.random() * 2 - 1) * (1 - i / size);
+      }
+      const source = audioContext.createBufferSource();
+      const highpass = audioContext.createBiquadFilter();
+      const lowpass = audioContext.createBiquadFilter();
+      const envelope = audioContext.createGain();
+      highpass.type = 'highpass';
+      highpass.frequency.value = 850 + Math.random() * 500;
+      lowpass.type = 'lowpass';
+      lowpass.frequency.value = 4200;
+      const duration = .095 + Math.random() * .035;
+      source.buffer = clapNoiseBuffer;
+      envelope.gain.setValueAtTime(.0001, startAt);
+      envelope.gain.linearRampToValueAtTime(volume * (.65 + Math.random() * .7), startAt + .004);
+      envelope.gain.exponentialRampToValueAtTime(.0001, startAt + duration);
+      source.connect(highpass);
+      highpass.connect(lowpass);
+      lowpass.connect(envelope);
+      envelope.connect(masterVolume);
+      source.onended = () => {
+        try { source.disconnect(); highpass.disconnect(); lowpass.disconnect(); envelope.disconnect(); } catch {}
+        scheduledAudioNodes = scheduledAudioNodes.filter((node) => node !== source);
+      };
+      source.start(startAt);
+      source.stop(startAt + duration + .01);
+      scheduledAudioNodes.push(source);
+    }
+
+    function playEvidenceCompleteSfx() {
+      if (soundMuted || !audioActive || !ensureAudioContext()) return;
+      if (audioContext.state === 'suspended') audioContext.resume();
+      const notes = [659.25, 783.99, 987.77, 1318.51];
+      notes.forEach((note, index) => {
+        soundTimeouts.push(window.setTimeout(() => {
+          if (!soundMuted) playTone(note, .46, 'triangle', .052, note * 1.025);
+        }, index * 135));
+      });
+      const clapOffsets = [260, 350, 450, 555, 655, 765, 875, 990, 1110, 1235, 1360];
+      clapOffsets.forEach((offset) => {
+        soundTimeouts.push(window.setTimeout(() => {
+          if (soundMuted || !audioContext) return;
+          const now = audioContext.currentTime;
+          playClapBurst(now, .042);
+          if (Math.random() > .32) playClapBurst(now + .035 + Math.random() * .02, .032);
+        }, offset));
+      });
+    }
+
     function startJungleMusic() {
       const melody = [523.25,659.25,783.99,659.25,587.33,783.99,880,783.99,523.25,659.25,987.77,783.99,698.46,587.33,659.25,523.25];
       let beat = 0;
@@ -1220,6 +1392,12 @@ const stages = {
 
     document.addEventListener('pointerdown', beginAudioAfterGesture, { passive: true });
     document.addEventListener('keydown', beginAudioAfterGesture);
+    document.addEventListener('click', (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      if (!target || target.closest('#sound-toggle, [data-evidence], .evidence-entry')) return;
+      const button = target.closest('button');
+      if ((button && !button.disabled) || target.closest('a[href], .scene-stage')) playClickSfx();
+    });
     document.getElementById('sound-toggle').addEventListener('click', toggleSound);
     updateSoundToggle();
 
@@ -1334,11 +1512,83 @@ const stages = {
       });
     }
 
+    function renderTeacherQuestions() {
+      const list = document.getElementById('teacher-question-list');
+      const filter = teacherQuestionFilter.value;
+      const visibleRows = teacherQuestionRows.filter((row) => filter === 'all' || row.stage_id === filter);
+      document.getElementById('teacher-question-count').textContent = String(teacherQuestionRows.length);
+      list.replaceChildren();
+      if (!visibleRows.length) {
+        const empty = document.createElement('p');
+        empty.className = 'teacher-question-empty';
+        empty.textContent = teacherQuestionRows.length
+          ? 'ไม่มีคำถามที่รอคำตอบในด่านที่เลือก'
+          : (backendEnabled ? 'ยังไม่มีคำถามที่รอคำตอบ ไกด์จะแจ้งตรงนี้เมื่อไม่แน่ใจในคำตอบ' : 'เชื่อมต่อ Supabase เพื่อรับคำถามจากนักเรียนข้ามเครื่อง');
+        list.append(empty);
+        return;
+      }
+      visibleRows.forEach((row) => {
+        const card = document.createElement('article');
+        card.className = 'teacher-question-card';
+        const content = document.createElement('div');
+        const title = document.createElement('h3');
+        title.textContent = row.question;
+        const meta = document.createElement('p');
+        meta.className = 'teacher-question-meta';
+        const stageIndex = stageOrder.indexOf(row.stage_id) + 1;
+        const student = Object.values(accounts).find((account) => account.id === row.asked_by_student_id);
+        const date = row.created_at ? new Date(row.created_at).toLocaleString('th-TH', { dateStyle:'medium', timeStyle:'short' }) : '';
+        meta.textContent = `ด่าน ${stageIndex} · ${stages[row.stage_id]?.title || 'ไม่ทราบด่าน'} · ${student?.name || student?.login_name || 'ผู้เรียน'}${date ? ` · ${date}` : ''}`;
+        content.append(title, meta);
+        const answerButton = document.createElement('button');
+        answerButton.className = 'action-button';
+        answerButton.type = 'button';
+        answerButton.textContent = 'เขียนคำตอบ';
+        answerButton.addEventListener('click', () => openTeacherAnswer(row));
+        card.append(content, answerButton);
+        list.append(card);
+      });
+    }
+
+    async function refreshTeacherQuestions() {
+      if (!backendEnabled || currentProfile?.role !== 'teacher' || !currentAuthUserId) {
+        teacherQuestionRows = [];
+        renderTeacherQuestions();
+        return;
+      }
+      const { data, error } = await supabaseClient.from('guide_question_bank')
+        .select('id,stage_id,question,asked_by_student_id,created_at')
+        .eq('teacher_id', currentAuthUserId)
+        .eq('status', 'pending')
+        .order('created_at', { ascending:false });
+      if (error) {
+        teacherQuestionRows = [];
+        renderTeacherQuestions();
+        const empty = document.querySelector('#teacher-question-list .teacher-question-empty');
+        if (empty) empty.textContent = 'ยังเชื่อมต่อกล่องคำถามไม่ได้ กรุณารันไฟล์ migration guide_question_bank ใน Supabase SQL Editor';
+        throw error;
+      }
+      teacherQuestionRows = data || [];
+      renderTeacherQuestions();
+    }
+
+    function openTeacherAnswer(row) {
+      selectedTeacherQuestion = row;
+      const stageIndex = stageOrder.indexOf(row.stage_id) + 1;
+      const student = Object.values(accounts).find((account) => account.id === row.asked_by_student_id);
+      document.getElementById('teacher-question-student').textContent = `ด่าน ${stageIndex} · ${stages[row.stage_id]?.title || 'ไม่ทราบด่าน'} · ${student?.name || student?.login_name || 'ผู้เรียน'}`;
+      document.getElementById('teacher-question-prompt').textContent = row.question;
+      document.getElementById('teacher-answer-input').value = '';
+      document.getElementById('teacher-question-dialog').showModal();
+      document.getElementById('teacher-answer-input').focus();
+    }
+
     async function refreshTeacherFromCloud() {
       if (!backendEnabled || currentProfile?.role !== 'teacher') return;
       try {
         await loadCloudTeacherData();
         renderTeacherStudents();
+        await refreshTeacherQuestions();
       } catch (error) {
         console.error('Unable to refresh teacher data.', error);
       }
@@ -1352,7 +1602,10 @@ const stages = {
       const displayName = account.display_name || account.name || username;
       if (account.role === 'teacher') {
         document.getElementById('teacher-greeting').textContent = `ยินดีต้อนรับ ${displayName}`;
-        if (backendEnabled) await loadCloudTeacherData();
+        if (backendEnabled) {
+          await loadCloudTeacherData();
+          await refreshTeacherQuestions();
+        }
         renderTeacherStudents();
         showView('teacher-view');
       } else {
@@ -1548,13 +1801,16 @@ const stages = {
       const hasNextStage = Boolean((nextStageId && stagePassed && isStageUnlocked(nextStageId)) || historyJump);
       shortcut.classList.toggle('hidden', !hasNextStage);
       shortcut.dataset.destination = historyJump ? 'history' : nextStageId || '';
-      shortcut.textContent = historyJump ? 'ไปยังสมัยประวัติศาสตร์ →' : hasNextStage ? `ไปด่าน ${stageOrder.indexOf(nextStageId) + 1} · ${stages[nextStageId].title} →` : '';
+      shortcut.textContent = historyJump ? 'ดูสรุปก่อนเข้าสมัยประวัติศาสตร์ →' : hasNextStage ? `ไปด่าน ${stageOrder.indexOf(nextStageId) + 1} · ${stages[nextStageId].title} →` : '';
     }
 
     function openEvidence(key) {
       const item = evidenceDataForStage[key];
       if (!item) return;
+      const isNewEvidence = !foundEvidence.has(key);
       foundEvidence.add(key);
+      playClickSfx();
+      if (isNewEvidence && foundEvidence.size === Object.keys(evidenceDataForStage).length) playEvidenceCompleteSfx();
       saveOldStoneProgress();
       renderGameProgress();
       const content = document.getElementById('evidence-dialog-content');
@@ -1624,19 +1880,19 @@ const stages = {
         if (/คำใบ้|ใบ้|หาอะไร|ควรหา|สิ่งของ/.test(q)) return 'คำใบ้: มองหาขวานที่ผิวเรียบจากการขัด ภาชนะดินเผา และแท่นหินที่ใช้ลับเครื่องมือ';
         if (/ขวาน|เครื่องมือ|หิน/.test(q)) return 'ขวานหินขัดเป็นหลักฐานเด่นของยุคหินใหม่ ข้อมูลกรมศิลปากรยังกล่าวถึงแท่นหินลับและภาชนะดินเผา';
         if (/ภาชนะ|หม้อ|ดินเผา/.test(q)) return 'ภาชนะดินเผาใช้บรรจุหรือปรุงอาหารได้ แต่รูปทรงในภาพเป็นภาพประกอบ ไม่ใช่ของจากแหล่งขุดค้นจริง';
-        return 'ฉันช่วยใบ้เรื่องขวานหินขัด ภาชนะดินเผา และแท่นหินลับได้นะ';
+        return null;
       }
       if (currentStageId === 'bronze') {
         if (/คำใบ้|ใบ้|หาอะไร|ควรหา|สิ่งของ/.test(q)) return 'คำใบ้: ลองหาเบ้าหลอมหรือแม่พิมพ์ ขวานสำริด และกำไลสำริด';
         if (/สำริด|โลหะ|ทองแดง|ดีบุก/.test(q)) return 'สำริดเป็นโลหะผสมที่มีทองแดงกับดีบุกเป็นส่วนสำคัญ และมีหลักฐานการทำเป็นเครื่องมือกับเครื่องประดับ';
         if (/หล่อ|เบ้า|แม่พิมพ์/.test(q)) return 'เบ้าหลอมและแม่พิมพ์ช่วยให้เราเรียนรู้การให้ความร้อนและขึ้นรูปโลหะ';
-        return 'ฉันช่วยใบ้เรื่องสำริด การหล่อ ขวาน หรือกำไลได้นะ';
+        return null;
       }
       if (currentStageId === 'iron') {
         if (/คำใบ้|ใบ้|หาอะไร|ควรหา|สิ่งของ/.test(q)) return 'คำใบ้: มองหาขวานเหล็ก ใบหอกเหล็ก และเตาถลุงเหล็ก';
         if (/เหล็ก|เครื่องมือ/.test(q)) return 'กรมศิลปากรยกขวานเหล็กและใบหอกเหล็กเป็นตัวอย่างวัตถุสมัยเหล็ก ส่วนเตาช่วยเล่าถึงการถลุงโลหะ';
         if (/หอก|ใบหอก/.test(q)) return 'ใบหอกเหล็กเป็นหนึ่งในหลักฐานเครื่องมือเหล็ก ลองสังเกตชิ้นยาวปลายแหลมบนโต๊ะ';
-        return 'ฉันช่วยใบ้เรื่องขวาน ใบหอก และกำไลเหล็กได้นะ';
+        return null;
       }
       if (currentStageId === 'middlestone') {
         if (/คำใบ้|ใบ้|หาอะไร|ควรหา|สิ่งของ/.test(q)) {
@@ -1648,7 +1904,7 @@ const stages = {
         if (/ยุคหินกลาง|หินกลาง/.test(q)) {
           return 'กรมศิลปากรอธิบายว่ายุคหินกลางมีการพัฒนาเทคนิคกะเทาะและเลือกหินให้เหมาะกับงานมากขึ้น ตัวอย่างเครื่องมือเรียกว่าเครื่องมือหินแบบหัวบิเนียน';
         }
-        return 'ฉันยังไม่มีข้อมูลพอจะตอบเรื่องนั้น ลองถามเรื่องคำใบ้ เครื่องมือหินแบบหัวบิเนียน หรือยุคหินกลางนะ';
+        return null;
       }
       if (/คำใบ้|ใบ้|หาอะไร|ควรหา|สิ่งของ/.test(q)) {
         return 'คำใบ้: มองหาที่กำบังซึ่งคนอาจใช้พักอาศัย และก้อนหินที่มีรอยกะเทาะเป็นคม ลองแตะบริเวณเพิงผา ก้อนหิน และสะเก็ดหินในฉากได้เลย';
@@ -1662,20 +1918,80 @@ const stages = {
       if (/ยุคหินเก่า|หินเก่า/.test(q)) {
         return 'ยุคหินเก่าเป็นช่วงก่อนประวัติศาสตร์ที่มีหลักฐานการใช้เครื่องมือหินกะเทาะ ข้อมูลในเกมยกตัวอย่างแหล่งโบราณคดีและเครื่องมือเพื่อให้เราฝึกสังเกตหลักฐาน';
       }
-      return 'ฉันยังไม่มีข้อมูลพอจะตอบเรื่องนั้น ลองถามฉันเรื่องคำใบ้ เครื่องมือหิน เพิงผา หรือยุคหินเก่านะ';
+      return null;
     }
 
-    function sendGuideMessage(question) {
+    function normalizeGuideQuestion(question) {
+      return question.toLocaleLowerCase('th').normalize('NFC').replace(/[\p{P}\p{S}\s]+/gu, '').trim();
+    }
+
+    function showGuidePortrait(mode) {
+      const portrait = document.getElementById('guide-chat-portrait');
+      clearTimeout(guidePortraitTimer);
+      portrait.classList.toggle('is-answering', mode === 'answer');
+      portrait.classList.toggle('is-thinking', mode === 'thinking');
+      portrait.setAttribute('aria-label', mode === 'answer' ? 'ไกด์นักสืบกำลังอธิบายคำตอบ' : mode === 'thinking' ? 'ไกด์นักสืบกำลังคิดคำตอบ' : 'ไกด์นักสืบ');
+      guidePortraitTimer = mode === 'idle' ? null : setTimeout(() => showGuidePortrait('idle'), 10000);
+    }
+
+    async function answerFromTeacherBank(question) {
+      const teacherId = currentProfile?.teacher_id;
+      if (!backendEnabled || currentProfile?.role !== 'student' || !teacherId || !currentAuthUserId) return null;
+      const normalized = normalizeGuideQuestion(question);
+      if (!normalized) return { text:'ช่วยพิมพ์คำถามเป็นคำหรือประโยคสั้น ๆ ให้ฉันอีกครั้งนะ', mode:'thinking' };
+      const { data: knownAnswer, error: lookupError } = await supabaseClient.from('guide_question_bank')
+        .select('answer')
+        .eq('teacher_id', teacherId)
+        .eq('stage_id', currentStageId)
+        .eq('normalized_question', normalized)
+        .eq('status', 'answered')
+        .maybeSingle();
+      if (lookupError) throw lookupError;
+      if (knownAnswer?.answer) return { text:knownAnswer.answer, mode:'answer' };
+
+      const { error: submitError } = await supabaseClient.from('guide_question_bank').insert({
+        teacher_id: teacherId,
+        stage_id: currentStageId,
+        question: question.trim(),
+        normalized_question: normalized,
+        status: 'pending',
+        asked_by_student_id: currentAuthUserId
+      });
+      // A matching pending question may already be waiting for this teacher.
+      if (submitError && !(submitError.code === '23505' && submitError.message?.includes('guide_question_bank_teacher_question_unique'))) {
+        throw submitError;
+      }
+      return { text:'ฉันยังไม่แน่ใจในคำตอบนี้ จึงส่งคำถามให้คุณครูช่วยตรวจแล้วนะ ไว้ลองถามฉันอีกครั้งหลังจากครูเพิ่มคำตอบให้ได้เลย', mode:'thinking' };
+    }
+
+    async function sendGuideMessage(question) {
       const text = question.trim();
       if (!text) return;
+      const replySequence = ++guideReplySequence;
+      showGuidePortrait('idle');
       const log = document.getElementById('guide-chat-log');
       const userMessage = document.createElement('div');
       userMessage.className = 'chat-message user';
       userMessage.textContent = text;
       const reply = document.createElement('div');
       reply.className = 'chat-message';
-      reply.textContent = guideReply(text);
+      const preparedAnswer = guideReply(text);
+      reply.textContent = preparedAnswer || 'ขอคิดหาคำตอบให้นะ…';
       log.append(userMessage, reply);
+      log.scrollTop = log.scrollHeight;
+      if (preparedAnswer) {
+        showGuidePortrait('answer');
+        return;
+      }
+      try {
+        const bankAnswer = await answerFromTeacherBank(text);
+        reply.textContent = bankAnswer?.text || 'ฉันยังไม่แน่ใจเรื่องนี้นะ ลองถามเรื่องหลักฐานหรือคำใบ้ของด่านนี้ดูได้เลย';
+        if (replySequence === guideReplySequence && document.getElementById('guide-dialog').open) showGuidePortrait(bankAnswer?.mode || 'thinking');
+      } catch (error) {
+        console.error('Unable to check or submit guide question.', error);
+        reply.textContent = 'ฉันยังไม่แน่ใจ และตอนนี้ส่งคำถามให้ครูไม่ได้ ลองเชื่อมต่ออินเทอร์เน็ตแล้วถามอีกครั้งนะ';
+        if (replySequence === guideReplySequence && document.getElementById('guide-dialog').open) showGuidePortrait('thinking');
+      }
       log.scrollTop = log.scrollHeight;
     }
 
@@ -1846,7 +2162,7 @@ const stages = {
       if (!renderHistoricalMapUnlock()) return;
       document.getElementById('stage-board').classList.remove('open');
       document.getElementById('history-board').classList.add('open');
-      document.getElementById('history-board').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('history-board').scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
     document.getElementById('back-from-history').addEventListener('click', () => {
@@ -1866,7 +2182,7 @@ const stages = {
         document.getElementById('stage-board').classList.remove('open');
         document.getElementById('history-board').classList.add('open');
         showView('student-view');
-        document.getElementById('history-board').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('history-board').scrollIntoView({ behavior: 'smooth', block: 'start' });
         return;
       }
       const nextStageId = stageOrder[stageOrder.indexOf(currentStageId) + 1];
@@ -1879,14 +2195,42 @@ const stages = {
     });
     document.getElementById('launch-activity').addEventListener('click', openActivity);
     document.getElementById('talk-to-guide').addEventListener('click', () => document.getElementById('guide-dialog').showModal());
+    document.getElementById('guide-dialog').addEventListener('close', () => {
+      guideReplySequence++;
+      showGuidePortrait('idle');
+    });
     document.getElementById('guide-chat-form').addEventListener('submit', (event) => {
       event.preventDefault();
       const input = document.getElementById('guide-chat-input');
-      sendGuideMessage(input.value);
+      void sendGuideMessage(input.value);
       input.value = '';
       input.focus();
     });
-    document.querySelectorAll('[data-guide-question]').forEach((button) => button.addEventListener('click', () => sendGuideMessage(button.dataset.guideQuestion)));
+    document.querySelectorAll('[data-guide-question]').forEach((button) => button.addEventListener('click', () => { void sendGuideMessage(button.dataset.guideQuestion); }));
+    teacherQuestionFilter.addEventListener('change', renderTeacherQuestions);
+    document.getElementById('cancel-teacher-answer').addEventListener('click', () => document.getElementById('teacher-question-dialog').close());
+    document.getElementById('teacher-answer-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const answer = document.getElementById('teacher-answer-input').value.trim();
+      if (!answer || !selectedTeacherQuestion || !backendEnabled || currentProfile?.role !== 'teacher') return;
+      const submitButton = event.currentTarget.querySelector('[type="submit"]');
+      submitButton.disabled = true;
+      try {
+        const { error } = await supabaseClient.from('guide_question_bank').update({
+          status:'answered', answer, answered_by:currentAuthUserId, answered_at:new Date().toISOString()
+        }).eq('id', selectedTeacherQuestion.id).eq('teacher_id', currentAuthUserId).eq('status', 'pending');
+        if (error) throw error;
+        document.getElementById('teacher-question-dialog').close();
+        selectedTeacherQuestion = null;
+        showNotice('บันทึกคำตอบแล้ว ไกด์จะนำไปตอบคำถามนี้ให้นักเรียนในครั้งต่อไป');
+        await refreshTeacherQuestions();
+      } catch (error) {
+        console.error('Unable to save teacher answer.', error);
+        showNotice('บันทึกคำตอบไม่สำเร็จ กรุณาตรวจสอบการตั้งค่า Supabase และลองอีกครั้ง');
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
     document.querySelector('.scene-stage').addEventListener('click', (event) => {
       if (!event.target.closest('.hotspot')) showNotice('ยังไม่พบหลักฐานตรงนี้ ลองถามไกด์หรือสังเกตสิ่งของและร่องรอยในฉากอีกครั้ง');
     });
@@ -1897,7 +2241,7 @@ const stages = {
         dialog.close();
         renderStageUnlocks();
         const nextStageId = stageOrder[stageOrder.indexOf(currentStageId) + 1];
-        showNotice(nextStageId ? `เก่งมาก! ผ่านด่าน${activeStage.title}แล้ว ปลดล็อก${stages[nextStageId].title}แล้ว` : 'ยอดเยี่ยม! ผ่านครบทั้งห้าด่านแล้ว ไปยังสมัยประวัติศาสตร์ได้เลย');
+        showNotice(nextStageId ? `เก่งมาก! ผ่านด่าน${activeStage.title}แล้ว ปลดล็อก${stages[nextStageId].title}แล้ว` : 'ยอดเยี่ยม! ผ่านครบทั้งห้าด่านแล้ว ไปดูสรุปก่อนเข้าสมัยประวัติศาสตร์ได้เลย');
       } else {
         dialog.close();
         openActivity();
